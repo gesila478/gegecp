@@ -324,17 +324,35 @@ new Vue({
                 };
 
                 this.isEditing = true;
-                this.$nextTick(() => {
-                    if (!this.editor) {
-                        this.initEditor();
-                    }
-                    this.editor.setValue(response);
-                    // 自动检测文件类型
-                    const model = this.editor.getModel();
-                    if (model) {
-                        monaco.editor.setModelLanguage(model, this.getFileLanguage(file.name));
-                    }
-                });
+                
+                // 等待下一个 tick，确保编辑器容器已经渲染
+                await this.$nextTick();
+                
+                // 确保编辑器已经初始化
+                if (!this.editor) {
+                    await new Promise(resolve => {
+                        const checkMonaco = () => {
+                            if (typeof monaco !== 'undefined' && monaco.editor) {
+                                this.initEditor();
+                                resolve();
+                            } else {
+                                setTimeout(checkMonaco, 100);
+                            }
+                        };
+                        checkMonaco();
+                    });
+                }
+
+                // 设置语言模式
+                const model = this.editor.getModel();
+                if (model) {
+                    monaco.editor.setModelLanguage(model, this.getFileLanguage(file.name));
+                }
+
+                // 设置内容
+                if (this.editor) {
+                    this.editor.setValue(response || '');
+                }
             } catch (error) {
                 console.error('读取文件失败:', error);
                 alert('读取文件失败: ' + (error.response?.data?.error || error.message));
@@ -844,19 +862,19 @@ new Vue({
 
         // 添加 initEditor 方法
         initEditor() {
-            // 确保 monaco 和 monaco.editor 都已经加载
-            if (typeof monaco === 'undefined' || !monaco.editor) {
-                setTimeout(() => this.initEditor(), 100);
-                return;
-            }
-
-            const editorContainer = document.getElementById('modal-editor');
-            if (!editorContainer) {
-                console.error('Editor container not found');
-                return;
-            }
-
             try {
+                // 确保 monaco 和 monaco.editor 都已经加载
+                if (typeof monaco === 'undefined' || !monaco.editor) {
+                    console.warn('Monaco Editor 尚未加载完成');
+                    return;
+                }
+
+                const editorContainer = document.getElementById('modal-editor');
+                if (!editorContainer) {
+                    console.error('找不到编辑器容器');
+                    return;
+                }
+
                 // 如果编辑器已存在，先销毁
                 if (this.editor) {
                     this.editor.dispose();
@@ -874,8 +892,30 @@ new Vue({
                     lineNumbers: 'on',
                     renderWhitespace: 'selection',
                     tabSize: 4,
-                    wordWrap: 'on'
+                    wordWrap: 'on',
+                    language: 'plaintext', // 默认设置为纯文本
+                    fixedOverflowWidgets: true, // 修复溢出部件的问题
+                    scrollbar: {
+                        vertical: 'visible',
+                        horizontal: 'visible'
+                    }
                 });
+
+                // 注册编辑器错误处理
+                this.editor.onDidChangeModelContent(() => {
+                    try {
+                        const model = this.editor.getModel();
+                        if (model && model.getLanguageId() === 'json') {
+                            const content = this.editor.getValue();
+                            if (content) {
+                                JSON.parse(content); // 验证 JSON 格式
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('JSON 格式验证失败:', e);
+                    }
+                });
+
             } catch (error) {
                 console.error('初始化编辑器失败:', error);
             }
