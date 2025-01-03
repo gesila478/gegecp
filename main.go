@@ -38,11 +38,11 @@ func init() {
 	}
 
 	// 初始化文件日志记录器
-	fileLogger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.LstdFlags)
+	fileLogger = config.GetLogger() // 使用 config 包中的日志记录器
 
-	// 设置gin的日志输出
-	gin.DefaultWriter = io.MultiWriter(os.Stdout, logFile)
-	gin.DefaultErrorWriter = io.MultiWriter(os.Stderr, logFile)
+	// 设置gin的日志输出 - 只写入到文件
+	gin.DefaultWriter = logFile
+	gin.DefaultErrorWriter = logFile
 }
 
 // SSHClientConfig SSH客户端配置
