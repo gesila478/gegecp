@@ -87,3 +87,32 @@ func AuthRequired() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// AuthMiddleware 验证用户是否已登录
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 检查是否是登录请求
+		if c.Request.URL.Path == "/api/login" {
+			c.Next()
+			return
+		}
+
+		// 从请求头中获取token
+		token := c.GetHeader("Authorization")
+		if token == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+			c.Abort()
+			return
+		}
+
+		// 从会话中获取用户名
+		username, exists := c.Get("username")
+		if !exists || username == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}

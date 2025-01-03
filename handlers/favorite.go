@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"gegecp/config"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,8 +22,14 @@ type UserFavorites struct {
 
 // 获取收藏列表
 func GetFavorites(c *gin.Context) {
-	username := config.GlobalConfig.Auth.Username
-	favorites, err := loadUserFavorites(username)
+	// 从会话中获取用户名
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		return
+	}
+
+	favorites, err := loadUserFavorites(username.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "加载收藏列表失败"})
 		return
@@ -35,14 +40,20 @@ func GetFavorites(c *gin.Context) {
 
 // 更新收藏列表
 func UpdateFavorites(c *gin.Context) {
+	// 从会话中获取用户名
+	username, exists := c.Get("username")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		return
+	}
+
 	var favorites []Favorite
 	if err := c.ShouldBindJSON(&favorites); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的请求参数"})
 		return
 	}
 
-	username := config.GlobalConfig.Auth.Username
-	if err := saveUserFavorites(username, favorites); err != nil {
+	if err := saveUserFavorites(username.(string), favorites); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存收藏列表失败"})
 		return
 	}
