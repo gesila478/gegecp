@@ -844,8 +844,8 @@ new Vue({
 
         // 添加 initEditor 方法
         initEditor() {
-            // 等待Monaco Editor加载完成
-            if (!window.monaco_ready) {
+            // 确保 monaco 和 monaco.editor 都已经加载
+            if (typeof monaco === 'undefined' || !monaco.editor) {
                 setTimeout(() => this.initEditor(), 100);
                 return;
             }
@@ -856,37 +856,29 @@ new Vue({
                 return;
             }
 
-            // 如果编辑器已存在，先销毁
-            if (this.editor) {
-                this.editor.dispose();
-                this.editor = null;
-            }
-
-            // 创建新的编辑器实例
-            this.editor = monaco.editor.create(editorContainer, {
-                value: '',
-                theme: 'vs-dark',
-                automaticLayout: true,
-                minimap: { enabled: true },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                lineNumbers: 'on',
-                renderWhitespace: 'selection',
-                tabSize: 4,
-                wordWrap: 'on',
-                quickSuggestions: false,
-                suggestOnTriggerCharacters: false,
-                parameterHints: { enabled: false },
-                suggest: { enabled: false }
-            });
-
-            // 确保编辑器在弹窗显示后调整大小
-            setTimeout(() => {
+            try {
+                // 如果编辑器已存在，先销毁
                 if (this.editor) {
-                    this.editor.layout();
-                    this.editor.focus();
+                    this.editor.dispose();
+                    this.editor = null;
                 }
-            }, 100);
+
+                // 创建新的编辑器实例
+                this.editor = monaco.editor.create(editorContainer, {
+                    value: '',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: true },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    renderWhitespace: 'selection',
+                    tabSize: 4,
+                    wordWrap: 'on'
+                });
+            } catch (error) {
+                console.error('初始化编辑器失败:', error);
+            }
         },
 
         // 显示权限设置弹窗
@@ -992,6 +984,13 @@ new Vue({
 
         // 添加点击事件监听器，用于关闭用户菜单
         document.addEventListener('click', this.handleClickOutside);
+
+        // 监听 monaco 编辑器就绪事件
+        window.addEventListener('monaco_ready', () => {
+            if (this.isEditing && !this.editor) {
+                this.initEditor();
+            }
+        });
     },
 
     beforeDestroy() {

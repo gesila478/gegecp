@@ -19,7 +19,12 @@
     <script src="/static/js/lib/monaco-editor/min/vs/loader.js"></script>
     <script>
         require(['vs/editor/editor.main'], function() {
-            window.monaco_ready = true;
+            // 确保 monaco 对象已经完全加载
+            if (typeof monaco !== 'undefined') {
+                window.monaco_ready = true;
+                // 触发一个自定义事件，通知 Vue 应用 monaco 已经准备就绪
+                window.dispatchEvent(new Event('monaco_ready'));
+            }
         });
     </script>
     <script type="module" src="/static/js/app.js"></script>
