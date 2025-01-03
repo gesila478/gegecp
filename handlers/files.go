@@ -131,11 +131,28 @@ func DeleteFile(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove(path); err != nil {
+	// 获取文件信息
+	fileInfo, err := os.Stat(path)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "文件删除成功"})
+
+	// 如果是目录，使用 os.RemoveAll
+	if fileInfo.IsDir() {
+		if err := os.RemoveAll(path); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	} else {
+		// 如果是文件，使用 os.Remove
+		if err := os.Remove(path); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "删除成功"})
 }
 
 func DownloadFile(c *gin.Context) {
@@ -252,12 +269,28 @@ func HandleFileDelete(c *gin.Context) {
 		return
 	}
 
-	if err := os.Remove(path); err != nil {
+	// 获取文件信息
+	fileInfo, err := os.Stat(path)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "文件删除成功"})
+	// 如果是目录，使用 os.RemoveAll
+	if fileInfo.IsDir() {
+		if err := os.RemoveAll(path); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	} else {
+		// 如果是文件，使用 os.Remove
+		if err := os.Remove(path); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "删除成功"})
 }
 
 // 处理文件读取请求
