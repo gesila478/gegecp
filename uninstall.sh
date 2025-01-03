@@ -26,8 +26,8 @@ rm -rf /opt/linux-panel
 
 # 删除日志文件
 echo "删除日志文件..."
-rm -rf /var/log/linux-panel
-rm -f /var/log/linux-panel-install.log
+rm -rf /opt/linux-panel/log
+rm -f /opt/linux-panel/log/panel.log
 
 # 删除临时文件
 echo "清理临时文件..."

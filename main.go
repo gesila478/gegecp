@@ -26,7 +26,7 @@ var fileLogger *log.Logger
 
 func init() {
 	// 创建日志目录
-	logDir := "/var/log/gegecp"
+	logDir := "./log"
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		// log.Fatal("无法创建日志目录:", err)
 	}
