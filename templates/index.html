@@ -154,10 +154,24 @@
                             <div class="card-header">
                                 <h2>Files</h2>
                                 <div class="breadcrumb">
-                                    <span v-for="(part, index) in pathParts" :key="index">
-                                        <a @click="navigateTo(part.path)">[[part.name]]</a>
-                                        <span v-if="index < pathParts.length - 1">/</span>
-                                    </span>
+                                    <template v-if="!isPathEditing">
+                                        <span v-for="(part, index) in pathParts" :key="index">
+                                            <a @click="navigateTo(part.path)">[[part.name]]</a>
+                                            <span v-if="index < pathParts.length - 1">/</span>
+                                        </span>
+                                        <button @click="startPathEdit" class="edit-path-btn">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </template>
+                                    <input v-else
+                                           type="text"
+                                           v-model="editingPath"
+                                           class="path-input"
+                                           @keydown="handlePathInputKeydown"
+                                           @blur="cancelPathEdit">
                                 </div>
                                 <div class="actions">
                                     <button @click="uploadFile" class="btn btn-primary">Upload</button>
@@ -1177,6 +1191,65 @@
 
         td code:hover {
             background-color: #e9ecef;
+        }
+
+        /* 路径导航样式 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            color: #666;
+            flex: 1;
+            min-width: 0;
+            margin: 0 20px;
+        }
+
+        .breadcrumb a {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            color: #1a73e8;
+        }
+
+        .edit-path-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: #666;
+            opacity: 0.6;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+
+        .edit-path-btn:hover {
+            opacity: 1;
+            color: #333;
+        }
+
+        .path-input {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 14px;
+            color: #333;
+            background: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .path-input:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
         }
     </style>
 </body>

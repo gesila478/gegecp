@@ -1,7 +1,10 @@
 #!/bin/bash
 
 echo "开始编译..."
-go build
+# 设置跨平台编译环境变量
+export GOOS=linux
+export GOARCH=amd64
+go build -o gegecp
 
 echo "准备部署文件..."
 # 创建临时目录
@@ -10,7 +13,7 @@ mkdir -p "$TEMP_DIR/static"
 mkdir -p "$TEMP_DIR/templates"
 
 # 复制需要的文件到临时目录
-cp gegecp "$TEMP_DIR/"
+cp gegecp "$TEMP_DIR/panel"
 cp -r static/* "$TEMP_DIR/static/"
 cp -r templates/* "$TEMP_DIR/templates/"
 

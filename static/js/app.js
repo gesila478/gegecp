@@ -83,6 +83,8 @@ new Vue({
             left: '0px'
         },
         selectedFile: null,
+        isPathEditing: false,
+        editingPath: '',
     },
     computed: {
         pathParts() {
@@ -251,6 +253,21 @@ new Vue({
                 });
             } catch (error) {
                 console.error('获取文件列表失败:', error);
+                // 添加友好的错误提示
+                this.$toast(error.response?.status === 500 ? 
+                    '访问路径不存在或无权限访问' : 
+                    '获取文件列表失败: ' + (error.response?.data?.error || '未知错误'));
+                
+                // 如果路径不存在，返回上一级目录
+                if (error.response?.status === 500) {
+                    const parts = this.currentPath.split('/').filter(Boolean);
+                    parts.pop();
+                    this.currentPath = parts.length === 0 ? '/' : '/' + parts.join('/');
+                    // 重新加载文件列表
+                    if (this.currentPath !== '/opt/gegecp') {
+                        this.listFiles();
+                    }
+                }
             }
         },
 
@@ -997,6 +1014,49 @@ new Vue({
         closeContextMenu() {
             this.showContextMenu = false;
         },
+
+        // 路径导航相关方法
+        startPathEdit() {
+            this.isPathEditing = true;
+            this.editingPath = this.currentPath;
+            this.$nextTick(() => {
+                const pathInput = document.querySelector('.path-input');
+                if (pathInput) {
+                    pathInput.focus();
+                    pathInput.select();
+                }
+            });
+        },
+
+        handlePathInputKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                this.submitPathEdit();
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                this.cancelPathEdit();
+            }
+        },
+
+        submitPathEdit() {
+            let path = this.editingPath.trim();
+            // 确保路径以 / 开头
+            if (!path.startsWith('/')) {
+                path = '/' + path;
+            }
+            // 移除结尾的 / (除非是根路径)
+            if (path !== '/' && path.endsWith('/')) {
+                path = path.slice(0, -1);
+            }
+            this.currentPath = path;
+            this.isPathEditing = false;
+            this.listFiles();
+        },
+
+        cancelPathEdit() {
+            this.isPathEditing = false;
+            this.editingPath = this.currentPath;
+        },
     },
     watch: {
         currentView(newView) {
@@ -1035,8 +1095,20 @@ new Vue({
             });
         }
 
-        // 添加点击事件监听器，用于关闭用户菜单
-        document.addEventListener('click', this.handleClickOutside);
+        // 添加点击事件监听器，用于关闭用户菜单和右键菜单
+        document.addEventListener('click', (event) => {
+            // 关闭用户菜单
+            const userInfo = document.querySelector('.user-info');
+            if (userInfo && !userInfo.contains(event.target)) {
+                this.showUserMenu = false;
+            }
+            
+            // 关闭右键菜单
+            const contextMenu = document.querySelector('.context-menu');
+            if (contextMenu && !contextMenu.contains(event.target)) {
+                this.showContextMenu = false;
+            }
+        });
     },
 
     beforeDestroy() {

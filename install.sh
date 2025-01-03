@@ -324,7 +324,7 @@ chmod 644 "$INSTALL_DIR/log/error.log"
 echo "正在启动服务..."
 systemctl daemon-reload
 systemctl stop gegecp 2>/dev/null || true
-sleep 2
+sleep 1
 systemctl enable gegecp
 systemctl start gegecp
 
@@ -339,7 +339,7 @@ fi
 
 # 等待服务完全启动
 echo "等待服务启动..."
-sleep 5
+sleep 2
 
 # 检查端口是否正常监听
 if ! netstat -tuln | grep -q ':8080 '; then
