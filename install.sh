@@ -310,6 +310,27 @@ SyslogIdentifier=gegecp
 WantedBy=multi-user.target
 EOF
 
+# 安装 logrotate
+apt-get install -y logrotate
+
+# 创建 logrotate 配置
+cat > /etc/logrotate.d/gegecp << EOF
+$INSTALL_DIR/log/*.log {
+    daily
+    rotate 7
+    missingok
+    dateext
+    compress
+    delaycompress
+    notifempty
+    create 644 root root
+    size 100M
+    postrotate
+        systemctl restart gegecp
+    endscript
+}
+EOF
+
 # 确保二进制文件有执行权限
 chmod +x "$INSTALL_DIR/panel"
 
