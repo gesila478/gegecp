@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +29,18 @@ func ValidateToken(token string) bool {
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var token string
+
+		// 获取session
+		session := sessions.Default(c)
+		username := session.Get("username")
+		sessionToken := session.Get("token")
+
+		// 如果session中有有效的token，直接通过
+		if username != nil && sessionToken != nil && ValidateToken(sessionToken.(string)) {
+			c.Set("username", username.(string))
+			c.Next()
+			return
+		}
 
 		// 检查是否是WebSocket请求
 		if c.Request.URL.Path == "/api/terminal/ws" {
@@ -58,6 +71,16 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
+		// 设置session
+		session.Set("username", config.GlobalConfig.Auth.Username)
+		session.Set("token", token)
+		if err := session.Save(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "保存会话失败"})
+			c.Abort()
+			return
+		}
+
+		c.Set("username", config.GlobalConfig.Auth.Username)
 		c.Next()
 	}
 }
