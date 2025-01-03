@@ -51,9 +51,6 @@ func Login(c *gin.Context) {
 	hasher.Write([]byte(config.GlobalConfig.Auth.Username + config.GlobalConfig.Auth.Password))
 	token := hex.EncodeToString(hasher.Sum(nil))
 
-	// 将用户名保存到会话中
-	c.Set("username", req.Username)
-
 	fmt.Printf("登录成功，生成token: %s\n", token)
 
 	c.JSON(http.StatusOK, gin.H{
@@ -66,7 +63,6 @@ func Login(c *gin.Context) {
 
 // 退出登录
 func Logout(c *gin.Context) {
-	c.Set("username", nil)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "退出成功",
 		"status":  "success",
