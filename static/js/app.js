@@ -324,35 +324,17 @@ new Vue({
                 };
 
                 this.isEditing = true;
-                
-                // 等待下一个 tick，确保编辑器容器已经渲染
-                await this.$nextTick();
-                
-                // 确保编辑器已经初始化
-                if (!this.editor) {
-                    await new Promise(resolve => {
-                        const checkMonaco = () => {
-                            if (typeof monaco !== 'undefined' && monaco.editor) {
-                                this.initEditor();
-                                resolve();
-                            } else {
-                                setTimeout(checkMonaco, 100);
-                            }
-                        };
-                        checkMonaco();
-                    });
-                }
-
-                // 设置语言模式
-                const model = this.editor.getModel();
-                if (model) {
-                    monaco.editor.setModelLanguage(model, this.getFileLanguage(file.name));
-                }
-
-                // 设置内容
-                if (this.editor) {
-                    this.editor.setValue(response || '');
-                }
+                this.$nextTick(() => {
+                    if (!this.editor) {
+                        this.initEditor();
+                    }
+                    this.editor.setValue(response);
+                    // 自动检测文件类型
+                    const model = this.editor.getModel();
+                    if (model) {
+                        monaco.editor.setModelLanguage(model, this.getFileLanguage(file.name));
+                    }
+                });
             } catch (error) {
                 console.error('读取文件失败:', error);
                 alert('读取文件失败: ' + (error.response?.data?.error || error.message));
@@ -862,63 +844,49 @@ new Vue({
 
         // 添加 initEditor 方法
         initEditor() {
-            try {
-                // 确保 monaco 和 monaco.editor 都已经加载
-                if (typeof monaco === 'undefined' || !monaco.editor) {
-                    console.warn('Monaco Editor 尚未加载完成');
-                    return;
-                }
-
-                const editorContainer = document.getElementById('modal-editor');
-                if (!editorContainer) {
-                    console.error('找不到编辑器容器');
-                    return;
-                }
-
-                // 如果编辑器已存在，先销毁
-                if (this.editor) {
-                    this.editor.dispose();
-                    this.editor = null;
-                }
-
-                // 创建新的编辑器实例
-                this.editor = monaco.editor.create(editorContainer, {
-                    value: '',
-                    theme: 'vs-dark',
-                    automaticLayout: true,
-                    minimap: { enabled: true },
-                    scrollBeyondLastLine: false,
-                    fontSize: 14,
-                    lineNumbers: 'on',
-                    renderWhitespace: 'selection',
-                    tabSize: 4,
-                    wordWrap: 'on',
-                    language: 'plaintext', // 默认设置为纯文本
-                    fixedOverflowWidgets: true, // 修复溢出部件的问题
-                    scrollbar: {
-                        vertical: 'visible',
-                        horizontal: 'visible'
-                    }
-                });
-
-                // 注册编辑器错误处理
-                this.editor.onDidChangeModelContent(() => {
-                    try {
-                        const model = this.editor.getModel();
-                        if (model && model.getLanguageId() === 'json') {
-                            const content = this.editor.getValue();
-                            if (content) {
-                                JSON.parse(content); // 验证 JSON 格式
-                            }
-                        }
-                    } catch (e) {
-                        console.warn('JSON 格式验证失败:', e);
-                    }
-                });
-
-            } catch (error) {
-                console.error('初始化编辑器失败:', error);
+            // 等待Monaco Editor加载完成
+            if (!window.monaco_ready) {
+                setTimeout(() => this.initEditor(), 100);
+                return;
             }
+
+            const editorContainer = document.getElementById('modal-editor');
+            if (!editorContainer) {
+                console.error('Editor container not found');
+                return;
+            }
+
+            // 如果编辑器已存在，先销毁
+            if (this.editor) {
+                this.editor.dispose();
+                this.editor = null;
+            }
+
+            // 创建新的编辑器实例
+            this.editor = monaco.editor.create(editorContainer, {
+                value: '',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: true },
+                scrollBeyondLastLine: false,
+                fontSize: 14,
+                lineNumbers: 'on',
+                renderWhitespace: 'selection',
+                tabSize: 4,
+                wordWrap: 'on',
+                quickSuggestions: false,
+                suggestOnTriggerCharacters: false,
+                parameterHints: { enabled: false },
+                suggest: { enabled: false }
+            });
+
+            // 确保编辑器在弹窗显示后调整大小
+            setTimeout(() => {
+                if (this.editor) {
+                    this.editor.layout();
+                    this.editor.focus();
+                }
+            }, 100);
         },
 
         // 显示权限设置弹窗
@@ -1024,13 +992,6 @@ new Vue({
 
         // 添加点击事件监听器，用于关闭用户菜单
         document.addEventListener('click', this.handleClickOutside);
-
-        // 监听 monaco 编辑器就绪事件
-        window.addEventListener('monaco_ready', () => {
-            if (this.isEditing && !this.editor) {
-                this.initEditor();
-            }
-        });
     },
 
     beforeDestroy() {
