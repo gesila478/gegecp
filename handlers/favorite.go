@@ -66,7 +66,7 @@ func UpdateFavorites(c *gin.Context) {
 
 // 从文件加载用户的收藏列表
 func loadUserFavorites(username string) ([]Favorite, error) {
-	favoritesDir := "data/favorites"
+	favoritesDir := "/opt/gegecp/data/favorites"
 	if err := os.MkdirAll(favoritesDir, 0755); err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func loadUserFavorites(username string) ([]Favorite, error) {
 
 // 保存用户的收藏列表到文件
 func saveUserFavorites(username string, favorites []Favorite) error {
-	favoritesDir := "data/favorites"
+	favoritesDir := "/opt/gegecp/data/favorites"
 	if err := os.MkdirAll(favoritesDir, 0755); err != nil {
 		return err
 	}
