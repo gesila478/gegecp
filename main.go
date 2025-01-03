@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"gegecp/config"
+	"gegecp/handlers"
+	"gegecp/middleware"
 	"io"
-	"linux-panel/config"
-	"linux-panel/handlers"
-	"linux-panel/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +26,7 @@ var fileLogger *log.Logger
 
 func init() {
 	// 创建日志目录
-	logDir := "/var/log/linux-panel"
+	logDir := "/var/log/gegecp"
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		// log.Fatal("无法创建日志目录:", err)
 	}

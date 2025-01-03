@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"linux-panel/config"
+	"gegecp/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	// "linux-panel/config"
 	"net/http"
 	"strings"
 	"time"

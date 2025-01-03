@@ -15,16 +15,16 @@ fi
 
 # 清理旧的安装
 echo "清理旧的安装..."
-systemctl stop linux-panel 2>/dev/null || true
-systemctl disable linux-panel 2>/dev/null || true
-rm -f /etc/systemd/system/linux-panel.service
-rm -rf /opt/linux-panel
+systemctl stop gegecp 2>/dev/null || true
+systemctl disable gegecp 2>/dev/null || true
+rm -f /etc/systemd/system/gegecp.service
+rm -rf /opt/gegecp
 systemctl daemon-reload
 
 # 下载安装脚本
 echo "下载安装脚本..."
 TMP_SCRIPT=$(mktemp)
-curl -o "$TMP_SCRIPT" https://raw.githubusercontent.com/gesila478/Gegecp/refs/heads/main/install.sh
+curl -o "$TMP_SCRIPT" https://raw.githubusercontent.com/gesila478/gegecp/refs/heads/main/install.sh
 
 # 检查下载是否成功
 if [ $? -ne 0 ]; then

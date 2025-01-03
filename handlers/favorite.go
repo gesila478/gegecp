@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"linux-panel/config"
+	"gegecp/config"
 	"net/http"
 	"os"
 	"path/filepath"

@@ -9,7 +9,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # 设置日志文件
-LOG_FILE="/var/log/linux-panel-install.log"
+LOG_FILE="/var/log/gegecp-install.log"
 
 # 日志函数
 log() {
@@ -149,7 +149,7 @@ if ! command -v go &> /dev/null; then
 fi
 
 # 创建工作目录
-INSTALL_DIR="/opt/linux-panel"
+INSTALL_DIR="/opt/gegecp"
 mkdir -p $INSTALL_DIR
 cd $INSTALL_DIR
 
@@ -174,7 +174,7 @@ fi
 log "正在编译..."
 # 删除可能存在的 go.mod 和 go.sum
 rm -f go.mod go.sum
-go mod init linux-panel
+go mod init gegecp
 go mod tidy
 go get github.com/gin-gonic/gin
 go get github.com/gorilla/websocket
@@ -285,7 +285,7 @@ chown -R root:root "$INSTALL_DIR"
 rm -rf "$TMP_DIR"
 
 # 创建服务文件
-cat > /etc/systemd/system/linux-panel.service << EOF
+cat > /etc/systemd/system/gegecp.service << EOF
 [Unit]
 Description=Linux Management Panel
 After=network.target
@@ -301,9 +301,9 @@ StartLimitInterval=60
 StartLimitBurst=3
 
 # 日志设置
-StandardOutput=append:/var/log/linux-panel/panel.log
-StandardError=append:/var/log/linux-panel/error.log
-SyslogIdentifier=linux-panel
+StandardOutput=append:/var/log/gegecp/panel.log
+StandardError=append:/var/log/gegecp/error.log
+SyslogIdentifier=gegecp
 
 [Install]
 WantedBy=multi-user.target
@@ -313,27 +313,27 @@ EOF
 chmod +x "$INSTALL_DIR/panel"
 
 # 创建日志目录和文件
-mkdir -p /var/log/linux-panel
-touch /var/log/linux-panel/panel.log
-touch /var/log/linux-panel/error.log
-chmod 755 /var/log/linux-panel
-chmod 644 /var/log/linux-panel/panel.log
-chmod 644 /var/log/linux-panel/error.log
+mkdir -p /var/log/gegecp
+touch /var/log/gegecp/panel.log
+touch /var/log/gegecp/error.log
+chmod 755 /var/log/gegecp
+chmod 644 /var/log/gegecp/panel.log
+chmod 644 /var/log/gegecp/error.log
 
 # 重启服务
 echo "正在启动服务..."
 systemctl daemon-reload
-systemctl stop linux-panel 2>/dev/null || true
+systemctl stop gegecp 2>/dev/null || true
 sleep 2
-systemctl enable linux-panel
-systemctl start linux-panel
+systemctl enable gegecp
+systemctl start gegecp
 
 # 检查服务状态
 echo "检查服务状态..."
-if ! systemctl is-active --quiet linux-panel; then
+if ! systemctl is-active --quiet gegecp; then
     echo -e "${RED}服务启动失败，请检查日志文件：${NC}"
-    echo "systemctl status linux-panel"
-    echo "tail -f /var/log/linux-panel/error.log"
+    echo "systemctl status gegecp"
+    echo "tail -f /var/log/gegecp/error.log"
     exit 1
 fi
 
@@ -344,7 +344,7 @@ sleep 5
 # 检查端口是否正常监听
 if ! netstat -tuln | grep -q ':8080 '; then
     echo -e "${RED}服务端口 8080 未正常监听，请检查日志文件：${NC}"
-    echo "tail -f /var/log/linux-panel/error.log"
+    echo "tail -f /var/log/gegecp/error.log"
     exit 1
 fi
 

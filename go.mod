@@ -1,4 +1,4 @@
-module linux-panel
+module gegecp
 
 go 1.21
 

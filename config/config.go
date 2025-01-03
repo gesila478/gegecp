@@ -20,7 +20,7 @@ var (
 func GetLogger() *log.Logger {
 	loggerOnce.Do(func() {
 		// 创建日志目录
-		logDir := "/var/log/linux-panel"
+		logDir := "/var/log/gegecp"
 		if err := os.MkdirAll(logDir, 0755); err != nil {
 			// 尝试使用临时目录
 			logDir = os.TempDir()

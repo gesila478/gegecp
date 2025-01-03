@@ -3,7 +3,7 @@ package middleware
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"linux-panel/config"
+	"gegecp/config"
 	"net/http"
 	"strings"
 

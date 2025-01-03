@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"linux-panel/config"
+	"gegecp/config"
 	"net/http"
 	"os"
 
