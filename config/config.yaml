@@ -23,5 +23,5 @@ system:
 
   # 日志设置
   log:
-    path: /var/log/gegecp
+    path: log
     level: info 

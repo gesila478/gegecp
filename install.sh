@@ -9,10 +9,11 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # 设置日志文件
-LOG_FILE="/var/log/gegecp-install.log"
+LOG_FILE="log/gegecp-install.log"
 
 # 日志函数
 log() {
+    mkdir -p "$(dirname "$LOG_FILE")"
     echo "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$LOG_FILE"
 }
 
