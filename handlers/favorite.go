@@ -62,7 +62,19 @@ func loadUserFavorites(username string) ([]Favorite, error) {
 
 	filePath := filepath.Join(favoritesDir, username+".json")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return []Favorite{}, nil
+		// 如果文件不存在，创建一个包含基本结构的文件
+		initialData := UserFavorites{
+			Username:  username,
+			Favorites: []Favorite{},
+		}
+		data, err := json.MarshalIndent(initialData, "", "  ")
+		if err != nil {
+			return nil, err
+		}
+		if err := os.WriteFile(filePath, data, 0644); err != nil {
+			return nil, err
+		}
+		return initialData.Favorites, nil
 	}
 
 	data, err := os.ReadFile(filePath)
@@ -70,9 +82,37 @@ func loadUserFavorites(username string) ([]Favorite, error) {
 		return nil, err
 	}
 
+	// 如果文件存在但为空，初始化基本结构
+	if len(data) == 0 {
+		initialData := UserFavorites{
+			Username:  username,
+			Favorites: []Favorite{},
+		}
+		data, err := json.MarshalIndent(initialData, "", "  ")
+		if err != nil {
+			return nil, err
+		}
+		if err := os.WriteFile(filePath, data, 0644); err != nil {
+			return nil, err
+		}
+		return initialData.Favorites, nil
+	}
+
 	var userFavorites UserFavorites
 	if err := json.Unmarshal(data, &userFavorites); err != nil {
-		return nil, err
+		// 如果解析失败，尝试重新初始化文件
+		initialData := UserFavorites{
+			Username:  username,
+			Favorites: []Favorite{},
+		}
+		data, err := json.MarshalIndent(initialData, "", "  ")
+		if err != nil {
+			return nil, err
+		}
+		if err := os.WriteFile(filePath, data, 0644); err != nil {
+			return nil, err
+		}
+		return initialData.Favorites, nil
 	}
 
 	return userFavorites.Favorites, nil
