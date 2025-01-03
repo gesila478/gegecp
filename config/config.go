@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -32,8 +31,8 @@ func GetLogger() *log.Logger {
 			// 如果无法打开文件，仅使用标准输出
 			logger = log.New(os.Stdout, "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		} else {
-			// 同时输出到文件和标准输出
-			logger = log.New(io.MultiWriter(os.Stdout, logFile), "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+			// 只输出到文件
+			logger = log.New(logFile, "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		}
 	})
 	return logger
