@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,7 +19,7 @@ var (
 func GetLogger() *log.Logger {
 	loggerOnce.Do(func() {
 		// 创建日志目录
-		logDir := "/var/log/gegecp"
+		logDir := "./log"
 		if err := os.MkdirAll(logDir, 0755); err != nil {
 			// 尝试使用临时目录
 			logDir = os.TempDir()
@@ -32,16 +31,9 @@ func GetLogger() *log.Logger {
 			// 如果无法打开文件，仅使用标准输出
 			logger = log.New(os.Stdout, "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		} else {
-			// 同时输出到文件和标准输出
-			logger = log.New(io.MultiWriter(os.Stdout, logFile), "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+			// 只输出到文件
+			logger = log.New(logFile, "[PANEL] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		}
-
-		// 记录启动信息
-		// logger.Printf("=== 日志系统初始化 ===")
-		// logger.Printf("日志目录: %s", logDir)
-		// logger.Printf("日志文件: %s", filepath.Join(logDir, "panel.log"))
-		// logger.Printf("程序运行用户: %s", os.Getenv("USER"))
-		// logger.Printf("当前工作目录: %s", getCurrentDir())
 	})
 	return logger
 }
