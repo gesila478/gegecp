@@ -27,7 +27,7 @@ body {
     background: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 350px;
 }
 
@@ -58,12 +58,12 @@ body {
 .form-control:focus {
     border-color: #007bff;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .btn-primary {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     background: #007bff;
     border: none;
     border-radius: 4px;
@@ -203,7 +203,7 @@ nav a.active {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .info-card h3 {
@@ -245,7 +245,7 @@ nav a.active {
 .content-card {
     background: white;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 24px;
 }
 
@@ -409,7 +409,7 @@ nav a.active {
 }
 
 /* 按钮样式 */
-button {
+/* button {
     padding: 0 12px;
     border: none;
     border-radius: 6px;
@@ -426,7 +426,7 @@ button {
     justify-content: center;
     gap: 8px;
     min-width: 80px;
-}
+} */
 
 buttonw {
     padding: 0 12px;
@@ -446,6 +446,7 @@ buttonw {
     gap: 8px;
     min-width: 80px;
 }
+
 buttonpt {
     padding: 0 12px;
     border: none;
@@ -497,6 +498,7 @@ input[type="text"] {
     background: #f8fafc;
     min-width: 200px;
 }
+
 input[type="password"] {
     padding: 0 12px;
     border: 1px solid #e5e9f2;
@@ -506,10 +508,11 @@ input[type="password"] {
     background: #f8fafc;
     min-width: 200px;
 }
+
 input[type="text"]:focus {
     border-color: #4318FF;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(67,24,255,0.1);
+    box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1);
     outline: none;
 }
 
@@ -562,6 +565,7 @@ input[type="text"]:focus {
     z-index: 1200;
     transition: all 0.3s ease;
 }
+
 .pc-container {
     position: relative;
     background: white;
@@ -616,6 +620,79 @@ input[type="text"]:focus {
     align-items: center;
     justify-content: center;
 }
+
+.up-btn {
+    min-width: unset;
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    background: #0099CC;
+    /* 背景颜色 */
+    color: #ffffff;
+    /* 按钮文字颜色 */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.up-btn:hover {
+    background-color: #00739a;
+    /* 鼠标移动上去时的背景颜色，这里设置为红色 */
+    color: #ffffff;
+    /* 鼠标移动上去时的文字颜色，这里设置为白色 */
+    /* border-color: #2fc9fc; */
+    /* 鼠标移动上去时的边框颜色，这里设置为红色 */
+}
+.xiao-btn {
+    min-width: unset;
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    background: #FF6666;
+    /* 背景颜色 */
+    color: #ffffff;
+    /* 按钮文字颜色 */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.xiao-btn:hover {
+    background-color: #c33333;
+    /* 鼠标移动上去时的背景颜色，这里设置为红色 */
+    color: #ffffff;
+    /* 鼠标移动上去时的文字颜色，这里设置为白色 */
+    /* border-color: #2fc9fc; */
+    /* 鼠标移动上去时的边框颜色，这里设置为红色 */
+}
+.xiaoquit-btn {
+    min-width: unset;
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    background: #0099CC;
+    /* 背景颜色 */
+    color: #ffffff;
+    /* 按钮文字颜色 */
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.xiaoquit-btn:hover {
+    background-color: #2fc9fc;
+    /* 鼠标移动上去时的背景颜色，这里设置为红色 */
+    color: #ffffff;
+    /* 鼠标移动上去时的文字颜色，这里设置为白色 */
+    /* border-color: #2fc9fc; */
+    /* 鼠标移动上去时的边框颜色，这里设置为红色 */
+}
+
+
+
 
 .modal-actions .window-btn:hover {
     background: #f6f8fd;
@@ -678,6 +755,7 @@ button.small svg {
     width: 14px;
     height: 14px;
 }
+
 /* 小按钮样式 */
 button.smalla {
     height: 16px;
@@ -690,6 +768,7 @@ button.smalla svg {
     width: 14px;
     height: 14px;
 }
+
 /* 文件列表样式优化 */
 .file-list th:last-child,
 .file-list td:last-child {
@@ -723,7 +802,7 @@ button.smalla svg {
     display: block;
 }
 
-/* 保留其他样式 */ 
+/* 保留其他样式 */
 
 .terminal-container {
     width: 100%;
@@ -771,7 +850,7 @@ button.smalla svg {
 .files-view {
     background: white;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .files-view .card {
@@ -910,7 +989,7 @@ button.smalla svg {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -977,12 +1056,14 @@ button.smalla svg {
 
 /* 文件和文件夹样式 */
 .files-view .table td .file-link {
-    color: #6B7280;  /* 默认文件颜色为灰色 */
+    color: #6B7280;
+    /* 默认文件颜色为灰色 */
     font-weight: normal;
 }
 
 .files-view .table tr[data-is-dir="true"] td .file-link {
-    color: #2563EB !important;  /* 文件夹使用亮蓝色 */
+    color: #2563EB !important;
+    /* 文件夹使用亮蓝色 */
     font-weight: 600;
 }
 
@@ -1044,7 +1125,7 @@ button.smalla svg {
     y: 4;
     width: 8;
     height: 8;
-} 
+}
 
 /* 进程状态标签 */
 .status-badge {
@@ -1078,7 +1159,7 @@ button.smalla svg {
 .status-badge.unknown {
     background-color: #f1f3f4;
     color: #5f6368;
-} 
+}
 
 .files-view .table th:last-child,
 .files-view .table td:last-child {
@@ -1090,7 +1171,7 @@ button.smalla svg {
     display: flex;
     gap: 4px;
     justify-content: flex-end;
-} 
+}
 
 .modal-actions .window-btn.close {
     color: #666;
@@ -1105,28 +1186,82 @@ button.smalla svg {
 
 .modal-actions .window-btn.close svg {
     transform: scale(1.1);
-} 
+}
 
 /* 右键菜单样式 */
 .context-menu {
     position: fixed;
     background: white;
-    border: 1px solid #e5e9f2;
-    border-radius: 4px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    padding: 8px 0;
+    border: 1px solid rgba(229, 233, 242, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 6px;
     z-index: 1000;
-    min-width: 160px;
+    min-width: 180px;
+    backdrop-filter: blur(10px);
+    animation: menuFadeIn 0.15s ease-out;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 右键菜单样式 */
+.context-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid rgba(229, 233, 242, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 4px;
+    z-index: 1000;
+    min-width: 140px;
+    backdrop-filter: blur(10px);
+    animation: menuFadeIn 0.15s ease-out;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .context-menu .menu-item {
-    padding: 8px 16px;
+    padding: 6px 10px;
+    margin: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
     color: #2B3674;
-    font-size: 14px;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.context-menu .menu-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 4px;
+    right: 4px;
+    height: 1px;
+    background: rgba(229, 233, 242, 0.5);
 }
 
 .context-menu .menu-item:hover {
@@ -1137,4 +1272,27 @@ button.smalla svg {
 .context-menu .menu-item i {
     width: 16px;
     text-align: center;
-} 
+    font-size: 14px;
+    color: #A3AED0;
+}
+
+.context-menu .menu-item:hover i {
+    color: #4318FF;
+}
+
+.context-menu .menu-item.danger {
+    color: #EE5D50;
+}
+
+.context-menu .menu-item.danger:hover {
+    background: #fff1f0;
+    color: #dc3545;
+}
+
+.context-menu .menu-item.danger i {
+    color: #EE5D50;
+}
+
+.context-menu .menu-item.danger:hover i {
+    color: #dc3545;
+}

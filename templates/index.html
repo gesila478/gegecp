@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,12 +19,13 @@
     </script>
     <script src="/static/js/lib/monaco-editor/min/vs/loader.js"></script>
     <script>
-        require(['vs/editor/editor.main'], function() {
+        require(['vs/editor/editor.main'], function () {
             window.monaco_ready = true;
         });
     </script>
     <script type="module" src="/static/js/app.js"></script>
 </head>
+
 <body @click="closeContextMenu">
     <div id="app" v-cloak>
         <!-- 登录界面 -->
@@ -48,14 +50,17 @@
             <div class="header">
                 <div class="logo">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" />
                     </svg>
                     Admin Panel
                 </div>
                 <div class="user">
                     <div class="user-info" @click="toggleUserMenu" style="cursor: pointer; position: relative;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path
+                                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <span>Admin</span>
                         <!-- 用户菜单 -->
@@ -63,7 +68,8 @@
                             <a @click="showChangePassword = true">修改密码</a>
                         </div>
                     </div>
-                    <button @click="logout" style="background-color: #c6c6c6;color: #fff;border-radius: 6px;padding: 0 12px;border: none;cursor: pointer;font-size: 14px;font-weight: 500;transition: all 0.2s;height: 32px;line-height: 32px;display: inline-flex;align-items: center;justify-content: center;gap: 8px;min-width: 80px;">退出</button>
+                    <button @click="logout"
+                        style="background-color: #c6c6c6;color: #fff;border-radius: 6px;padding: 0 12px;border: none;cursor: pointer;font-size: 14px;font-weight: 500;transition: all 0.2s;height: 24px;line-height: 24px;display: inline-flex;align-items: center;justify-content: center;gap: 8px;min-width: 50px;">退出</button>
                 </div>
             </div>
 
@@ -73,25 +79,35 @@
                     <nav>
                         <a @click="currentView='system'" :class="{active: currentView=='system'}">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                             首页
                         </a>
                         <a @click="currentView='files'" :class="{active: currentView=='files'}">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                             文件管理
                         </a>
                         <a @click="currentView='process'" :class="{active: currentView=='process'}">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                             进程管理
                         </a>
                         <a @click="currentView='terminal'" :class="{active: currentView=='terminal'}">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
                             </svg>
                             SSH终端
                         </a>
@@ -108,39 +124,50 @@
                                 <div class="value">[[formatPercent(systemInfo.cpu.percent)]]</div>
                                 <div class="detail">[[systemInfo.cpu.model]]</div>
                                 <div class="trend" :class="systemInfo.cpu.trend > 0 ? 'up' : 'down'">
-                                    <svg v-if="systemInfo.cpu.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg v-if="systemInfo.cpu.trend > 0" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <span>[[formatPercent(Math.abs(systemInfo.cpu.trend))]]</span>
                                 </div>
                             </div>
                             <div class="info-card">
                                 <h3>内存使用情况</h3>
-                                <div class="value">[[formatBytes(systemInfo.memory.used)]] / [[formatBytes(systemInfo.memory.total)]]</div>
+                                <div class="value">[[formatBytes(systemInfo.memory.used)]] /
+                                    [[formatBytes(systemInfo.memory.total)]]</div>
                                 <div class="detail">[[formatBytes(systemInfo.memory.free)]] 剩余</div>
                                 <div class="trend" :class="systemInfo.memory.trend > 0 ? 'up' : 'down'">
-                                    <svg v-if="systemInfo.memory.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg v-if="systemInfo.memory.trend > 0" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <span>[[formatPercent(Math.abs(systemInfo.memory.trend))]]</span>
                                 </div>
                             </div>
                             <div class="info-card">
                                 <h3>磁盘使用情况</h3>
-                                <div class="value">[[formatBytes(systemInfo.disk.used)]] / [[formatBytes(systemInfo.disk.total)]]</div>
+                                <div class="value">[[formatBytes(systemInfo.disk.used)]] /
+                                    [[formatBytes(systemInfo.disk.total)]]</div>
                                 <div class="detail">[[formatBytes(systemInfo.disk.free)]] 剩余</div>
                                 <div class="trend" :class="systemInfo.disk.trend > 0 ? 'up' : 'down'">
-                                    <svg v-if="systemInfo.disk.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <svg v-if="systemInfo.disk.trend > 0" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <span>[[formatPercent(Math.abs(systemInfo.disk.trend))]]</span>
                                 </div>
@@ -161,20 +188,21 @@
                                         </span>
                                         <button @click="startPathEdit" class="edit-path-btn">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
                                             </svg>
                                         </button>
                                     </template>
-                                    <input v-else
-                                           type="text"
-                                           v-model="editingPath"
-                                           class="path-input"
-                                           @keydown="handlePathInputKeydown"
-                                           @blur="cancelPathEdit">
+                                    <input v-else type="text" v-model="editingPath" class="path-input"
+                                        @keydown="handlePathInputKeydown" @blur="cancelPathEdit">
                                 </div>
                                 <div class="actions">
-                                    <button @click="uploadFile" class="btn btn-primary">Upload</button>
+                                    <button @click="uploadFile" class="up-btn"
+                                        style="min-width: 36px;min-height: 22px;padding: 2px;">Upload</button>
                                     <input type="file" ref="fileInput" style="display: none" @change="handleFileUpload">
                                 </div>
                             </div>
@@ -184,18 +212,20 @@
                                     <h3>收藏列表</h3>
                                 </div>
                                 <div class="favorites-content">
-                                    <div v-for="fav in favorites" :key="fav.path" class="favorite-item" 
-                                         @click="handleFavoriteClick(fav)">
+                                    <div v-for="fav in favorites" :key="fav.path" class="favorite-item"
+                                        @click="handleFavoriteClick(fav)">
                                         <span class="favorite-icon">
-                                            <svg v-if="fav.isDir" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" 
-                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" 
-                                                      stroke-linejoin="round"/>
+                                            <svg v-if="fav.isDir" width="16" height="16" viewBox="0 0 24 24"
+                                                fill="none">
+                                                <path
+                                                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
                                             </svg>
                                             <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z" 
-                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" 
-                                                      stroke-linejoin="round"/>
+                                                <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
                                             </svg>
                                         </span>
                                         <span class="favorite-name">[[fav.name]]</span>
@@ -215,19 +245,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="file in files" :key="file.name" :data-is-dir="file.isDir" @contextmenu="handleContextMenu($event, file)">
+                                        <tr v-for="file in files" :key="file.name" :data-is-dir="file.isDir"
+                                            @contextmenu="handleContextMenu($event, file)">
                                             <td style="white-space: nowrap;">
                                                 <div class="file-name-container">
                                                     <a @click="handleFileClick(file)" class="file-link">
                                                         <i :class="file.isDir ? 'fas fa-folder' : 'fas fa-file'"></i>
                                                         [[file.name]]
-                                                        <span @click.stop="toggleFavorite(file)" class="star-icon" :class="{'is-favorite': isFavorite(file)}">
+                                                        <span @click.stop="toggleFavorite(file)" class="star-icon"
+                                                            :class="{'is-favorite': isFavorite(file)}">
                                                             [[isFavorite(file) ? '★' : '☆']]
                                                         </span>
                                                     </a>
                                                 </div>
                                             </td>
-                                            <td><code @click="showPermissionModal(file)">[[file.permissions]]</code></td>
+                                            <td><code @click="showPermissionModal(file)">[[file.permissions]]</code>
+                                            </td>
                                             <td>[[formatBytes(file.size)]]</td>
                                             <td>[[formatDate(file.modTime)]]</td>
                                             <td>
@@ -236,7 +269,8 @@
                                                         <i class="fas fa-edit"></i>
                                                         编辑
                                                     </a>
-                                                    <a @click="downloadFile(file)" v-if="!file.isDir" class="action-link">
+                                                    <a @click="downloadFile(file)" v-if="!file.isDir"
+                                                        class="action-link">
                                                         <i class="fas fa-download"></i>
                                                         下载
                                                     </a>
@@ -259,7 +293,7 @@
                             <div class="card-header">
                                 <h2>Processes</h2>
                                 <div class="actions">
-                                    <button @click="listProcesses" class="btn btn-primary">
+                                    <button @click="listProcesses" class="up-btn" style="min-width: 36px;min-height: 22px;">
                                         <i class="fas fa-sync"></i>
                                         刷新
                                     </button>
@@ -284,12 +318,12 @@
                                             <td>[[formatPercent(process.cpu)]]</td>
                                             <td>[[formatBytes(process.memory)]]</td>
                                             <td>
-                                                <span class="status-badge" :class="process.status">[[process.status]]</span>
+                                                <span class="status-badge"
+                                                    :class="process.status">[[process.status]]</span>
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <button @click="killProcess(process)" class="danger small btn-danger">
-                                                        <i class="fas fa-times"></i>
+                                                    <button @click="killProcess(process)" class="xiao-btn" style="min-width: 36px;min-height: 22px;padding: 2px;">
                                                         终止
                                                     </button>
                                                 </div>
@@ -311,7 +345,7 @@
                                 <input type="password" v-model="sshConfig.password" placeholder="密码">
                                 <button @click="connectSSH" class="btn btn-primary">连接</button>
                             </div>
-                            <button v-else @click="disconnectSSH" class="btn btn-danger">断开连接</button>
+                            <button v-else @click="disconnectSSH" class="up-btn" style="min-width: 36px;min-height: 22px;padding: 2px;background-color: #4c4c4c;">断开连接</button>
                         </div>
                         <div class="card-body terminal-container">
                             <div id="terminal"></div>
@@ -389,21 +423,28 @@
                     <div class="modal-header">
                         <h3>编辑文件: [[currentEditingFile.name]]</h3>
                         <div class="modal-actions">
-                            <button @click="saveFile" style="min-width: 0px;line-height: 22px;height: 27px;">保存</button>
+                            <button @click="saveFile"
+                                style="min-width: 0px; line-height: 22px; height: 27px; padding: 0 10px; border-radius: 4px; background-color: #fff; border: 1px solid #d9d9d9; color: rgba(0, 0, 0, 0.65);"
+                                onmouseover="this.style.color='#40a9ff'"
+                                onmouseout="this.style.color='rgba(0, 0, 0, 0.65)'">保存</button>
                             <!-- <button class="secondary" @click="cancelEdit">取消</button> -->
                             <button class="window-btn minimize" @click="minimizeEditor">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                 </svg>
                             </button>
-                            <button class="window-btn maximize" @click="toggleEditorMaximize" :class="{'is-maximized': isEditorMaximized}">
+                            <button class="window-btn maximize" @click="toggleEditorMaximize"
+                                :class="{'is-maximized': isEditorMaximized}">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="2"
+                                        fill="none" />
                                 </svg>
                             </button>
-                            <button class="window-btn close" @click="cancelEdit" :class="{'is-maximized': isEditorMaximized}">
+                            <button class="window-btn close" @click="cancelEdit"
+                                :class="{'is-maximized': isEditorMaximized}">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
                                 </svg>
                             </button>
                         </div>
@@ -416,28 +457,33 @@
 
             <!-- 修改密码弹窗 -->
             <div v-if="showChangePassword" class="modal">
-                <div class="modal-overlay" @click="showChangePassword = false" style="background-color: rgba(0, 0, 0, 0.3);"></div>
+                <div class="modal-overlay" @click="showChangePassword = false"
+                    style="background-color: rgba(0, 0, 0, 0.3);"></div>
                 <div class="pc-container password-modal">
                     <div class="modal-header">
                         <h3>修改密码</h3>
                         <button class="close-btn" @click="showChangePassword = false">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
                             </svg>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label>当前密码</label>
-                            <input type="password" v-model="passwordForm.oldPassword" class="form-control" placeholder="请输入当前密码">
+                            <input type="password" v-model="passwordForm.oldPassword" class="form-control"
+                                placeholder="请输入当前密码">
                         </div>
                         <div class="form-group">
                             <label>新密码</label>
-                            <input type="password" v-model="passwordForm.newPassword" class="form-control" placeholder="请输入新密码">
+                            <input type="password" v-model="passwordForm.newPassword" class="form-control"
+                                placeholder="请输入新密码">
                         </div>
                         <div class="form-group">
                             <label>确认新密码</label>
-                            <input type="password" v-model="passwordForm.confirmPassword" class="form-control" placeholder="请再次输入新密码">
+                            <input type="password" v-model="passwordForm.confirmPassword" class="form-control"
+                                placeholder="请再次输入新密码">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -453,9 +499,11 @@
                 <div class="permission-modal">
                     <div class="modal-header">
                         <h3>权限设置: [[currentFile.name]]</h3>
-                        <button class="close-btn" style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="showPermissions = false">
+                        <button class="xiao-btn" style="min-width: 32px;min-height: 32px;"
+                            @click="showPermissions = false">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
                             </svg>
                         </button>
                     </div>
@@ -491,8 +539,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="showPermissions = false">取消</button>
-                        <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="savePermissions" class="primary">保存</button>
+                        <button class="xiaoquit-btn" @click="showPermissions = false"
+                            style="min-width: 46px;min-height: 32px;">取消</button>
+                        <button class="xiaoquit-btn" @click="savePermissions"
+                            style="min-width: 46px;min-height: 32px;">保存</button>
                     </div>
                 </div>
             </div>
@@ -519,7 +569,6 @@
     </div>
 
     <style>
-
         /* 设置始终显示滚动条 */
         html {
             overflow: hidden;
@@ -588,7 +637,7 @@
             background: white;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 8px 0;
             min-width: 120px;
             z-index: 1000;
@@ -1253,4 +1302,5 @@
         }
     </style>
 </body>
-</html> 
+
+</html>
