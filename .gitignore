@@ -1,4 +1,6 @@
 /.DS_Store
 /dist
 static/.DS_Store
+*.sh
 deploy.sh
+*.log

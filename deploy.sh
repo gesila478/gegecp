@@ -22,4 +22,4 @@ echo "清理临时文件..."
 rm -rf "$TEMP_DIR"
 
 echo "重启服务..."
-sshpass -p 'andyou' ssh root@192.168.100.21 "systemctl restart gegecp"  
+sshpass -p 'andyou' ssh root@192.168.100.21 "systemctl restart gegecp"
