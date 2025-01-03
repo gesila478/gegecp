@@ -17,8 +17,6 @@ import (
 	"time"
 
 	"github.com/creack/pty"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/ssh"
@@ -404,26 +402,17 @@ func handleLocalTerminal(ws *websocket.Conn) {
 }
 
 func main() {
-	// 加载配置
-	if err := config.LoadConfig("config/config.yaml"); err != nil {
-		log.Fatal("加载配置失败:", err)
-	}
-
+	// 初始化路由
 	r := gin.Default()
 
-	// 初始化session中间件
-	store := cookie.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions("gegecp_session", store))
+	// 加载配置文件
+	if err := config.LoadConfig("config/config.yaml"); err != nil {
+		// log.Fatal("加载配置文件失败:", err)
+	}
 
 	// 设置静态文件路由
 	r.Static("/static", "./static")
 	r.LoadHTMLGlob("templates/*")
-
-	// 设置为生产模式
-	gin.SetMode(gin.ReleaseMode)
-
-	// 设置受信任的代理
-	r.SetTrustedProxies([]string{"127.0.0.1"})
 
 	// 首页路由
 	r.GET("/", func(c *gin.Context) {

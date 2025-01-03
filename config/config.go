@@ -19,11 +19,8 @@ var (
 // GetLogger 返回全局日志记录器
 func GetLogger() *log.Logger {
 	loggerOnce.Do(func() {
-		// 获取当前工作目录
-		currentDir := getCurrentDir()
-
 		// 创建日志目录
-		logDir := filepath.Join(currentDir, "log")
+		logDir := "/var/log/gegecp"
 		if err := os.MkdirAll(logDir, 0755); err != nil {
 			// 尝试使用临时目录
 			logDir = os.TempDir()

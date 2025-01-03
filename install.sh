@@ -9,11 +9,10 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # 设置日志文件
-LOG_FILE="log/gegecp-install.log"
+LOG_FILE="/var/log/gegecp-install.log"
 
 # 日志函数
 log() {
-    mkdir -p "$(dirname "$LOG_FILE")"
     echo "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$LOG_FILE"
 }
 
@@ -302,45 +301,24 @@ StartLimitInterval=60
 StartLimitBurst=3
 
 # 日志设置
-StandardOutput=append:$INSTALL_DIR/log/panel.log
-StandardError=append:$INSTALL_DIR/log/error.log
+StandardOutput=append:/var/log/gegecp/panel.log
+StandardError=append:/var/log/gegecp/error.log
 SyslogIdentifier=gegecp
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# 安装 logrotate
-apt-get install -y logrotate
-
-# 创建 logrotate 配置
-cat > /etc/logrotate.d/gegecp << EOF
-$INSTALL_DIR/log/*.log {
-    daily
-    rotate 7
-    missingok
-    dateext
-    compress
-    delaycompress
-    notifempty
-    create 644 root root
-    size 100M
-    postrotate
-        systemctl restart gegecp
-    endscript
-}
-EOF
-
 # 确保二进制文件有执行权限
 chmod +x "$INSTALL_DIR/panel"
 
 # 创建日志目录和文件
-mkdir -p "$INSTALL_DIR/log"
-touch "$INSTALL_DIR/log/panel.log"
-touch "$INSTALL_DIR/log/error.log"
-chmod 755 "$INSTALL_DIR/log"
-chmod 644 "$INSTALL_DIR/log/panel.log"
-chmod 644 "$INSTALL_DIR/log/error.log"
+mkdir -p /var/log/gegecp
+touch /var/log/gegecp/panel.log
+touch /var/log/gegecp/error.log
+chmod 755 /var/log/gegecp
+chmod 644 /var/log/gegecp/panel.log
+chmod 644 /var/log/gegecp/error.log
 
 # 重启服务
 echo "正在启动服务..."

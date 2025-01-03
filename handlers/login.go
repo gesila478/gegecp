@@ -7,7 +7,6 @@ import (
 	"gegecp/config"
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,34 +23,35 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	// 打印接收到的用户名和密码（仅用于调试）
+	fmt.Printf("\n=== 登录请求详情 ===\n")
+	fmt.Printf("接收到的用户名: [%s] (长度: %d)\n", req.Username, len(req.Username))
+	fmt.Printf("接收到的密码哈希: [%s] (长度: %d)\n", req.Password, len(req.Password))
+	fmt.Printf("配置文件中的用户名: [%s] (长度: %d)\n", config.GlobalConfig.Auth.Username, len(config.GlobalConfig.Auth.Username))
+	fmt.Printf("配置文件中的密码哈希: [%s] (长度: %d)\n", config.GlobalConfig.Auth.Password, len(config.GlobalConfig.Auth.Password))
+
 	// 验证用户名和密码
 	if req.Username != config.GlobalConfig.Auth.Username {
 		fmt.Printf("用户名不匹配\n")
+		fmt.Printf("用户名比较: [%s] != [%s]\n", req.Username, config.GlobalConfig.Auth.Username)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户名或密码错误"})
 		return
 	}
 
+	// 直接比较密码哈希
 	if req.Password != config.GlobalConfig.Auth.Password {
 		fmt.Printf("密码哈希不匹配\n")
+		fmt.Printf("密码哈希比较: [%s] != [%s]\n", req.Password, config.GlobalConfig.Auth.Password)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户名或密码错误"})
 		return
 	}
 
 	// 生成 token
 	hasher := md5.New()
-	hasher.Write([]byte(req.Username + req.Password))
+	hasher.Write([]byte(config.GlobalConfig.Auth.Username + config.GlobalConfig.Auth.Password))
 	token := hex.EncodeToString(hasher.Sum(nil))
 
-	// 设置session
-	session := sessions.Default(c)
-	session.Set("username", req.Username)
-	session.Set("token", token)
-	if err := session.Save(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存会话失败"})
-		return
-	}
-
-	fmt.Printf("登录成功，用户名: %s, token: %s\n", req.Username, token)
+	fmt.Printf("登录成功，生成token: %s\n", token)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":   token,

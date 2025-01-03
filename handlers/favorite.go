@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"gegecp/config"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -22,14 +23,8 @@ type UserFavorites struct {
 
 // 获取收藏列表
 func GetFavorites(c *gin.Context) {
-	// 从session中获取用户名
-	username, exists := c.Get("username")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
-		return
-	}
-
-	favorites, err := loadUserFavorites(username.(string))
+	username := config.GlobalConfig.Auth.Username
+	favorites, err := loadUserFavorites(username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "加载收藏列表失败"})
 		return
@@ -46,14 +41,8 @@ func UpdateFavorites(c *gin.Context) {
 		return
 	}
 
-	// 从session中获取用户名
-	username, exists := c.Get("username")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
-		return
-	}
-
-	if err := saveUserFavorites(username.(string), favorites); err != nil {
+	username := config.GlobalConfig.Auth.Username
+	if err := saveUserFavorites(username, favorites); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存收藏列表失败"})
 		return
 	}
