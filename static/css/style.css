@@ -1106,3 +1106,35 @@ button.smalla svg {
 .modal-actions .window-btn.close svg {
     transform: scale(1.1);
 } 
+
+/* 右键菜单样式 */
+.context-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid #e5e9f2;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    min-width: 160px;
+}
+
+.context-menu .menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2B3674;
+    font-size: 14px;
+}
+
+.context-menu .menu-item:hover {
+    background: #f6f8fd;
+    color: #4318FF;
+}
+
+.context-menu .menu-item i {
+    width: 16px;
+    text-align: center;
+} 

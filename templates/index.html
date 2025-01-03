@@ -24,7 +24,7 @@
     </script>
     <script type="module" src="/static/js/app.js"></script>
 </head>
-<body>
+<body @click="closeContextMenu">
     <div id="app" v-cloak>
         <!-- 登录界面 -->
         <div v-if="!isLoggedIn" class="login-container">
@@ -201,7 +201,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="file in files" :key="file.path" :data-is-dir="file.isDir">
+                                        <tr v-for="file in files" :key="file.name" :data-is-dir="file.isDir" @contextmenu="handleContextMenu($event, file)">
                                             <td style="white-space: nowrap;">
                                                 <div class="file-name-container">
                                                     <a @click="handleFileClick(file)" class="file-link">
@@ -480,6 +480,25 @@
                         <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="showPermissions = false">取消</button>
                         <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="savePermissions" class="primary">保存</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- 添加右键菜单 -->
+            <div class="context-menu" v-if="showContextMenu" :style="contextMenuStyle">
+                <div class="menu-item" @click="handleMenuClick('open')">
+                    <i class="fas fa-folder-open"></i> 打开
+                </div>
+                <div class="menu-item" @click="handleMenuClick('edit')" v-if="!selectedFile.isDir">
+                    <i class="fas fa-edit"></i> 编辑
+                </div>
+                <div class="menu-item" @click="handleMenuClick('download')" v-if="!selectedFile.isDir">
+                    <i class="fas fa-download"></i> 下载
+                </div>
+                <div class="menu-item" @click="handleMenuClick('delete')">
+                    <i class="fas fa-trash"></i> 删除
+                </div>
+                <div class="menu-item" @click="handleMenuClick('chmod')">
+                    <i class="fas fa-key"></i> 权限设置
                 </div>
             </div>
         </div>

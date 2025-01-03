@@ -77,6 +77,12 @@ new Vue({
             },
             recursive: false
         },
+        showContextMenu: false,
+        contextMenuStyle: {
+            top: '0px',
+            left: '0px'
+        },
+        selectedFile: null,
     },
     computed: {
         pathParts() {
@@ -951,6 +957,45 @@ new Vue({
                 console.error('修改权限失败:', error);
                 this.$toast('修改权限失败: ' + (error.response?.data?.error || '未知错误'));
             }
+        },
+
+        // 右键菜单相关方法
+        handleContextMenu(event, file) {
+            event.preventDefault();
+            this.selectedFile = file;
+            this.showContextMenu = true;
+            this.contextMenuStyle = {
+                top: `${event.clientY}px`,
+                left: `${event.clientX}px`
+            };
+        },
+
+        handleMenuClick(action) {
+            if (!this.selectedFile) return;
+            
+            switch (action) {
+                case 'open':
+                    this.handleFileClick(this.selectedFile);
+                    break;
+                case 'edit':
+                    this.editFile(this.selectedFile);
+                    break;
+                case 'download':
+                    this.downloadFile(this.selectedFile);
+                    break;
+                case 'delete':
+                    this.deleteFile(this.selectedFile);
+                    break;
+                case 'chmod':
+                    this.showPermissionModal(this.selectedFile);
+                    break;
+            }
+            this.showContextMenu = false;
+        },
+
+        // 点击其他地方关闭右键菜单
+        closeContextMenu() {
+            this.showContextMenu = false;
         },
     },
     watch: {
