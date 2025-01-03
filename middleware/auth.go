@@ -11,7 +11,7 @@ import (
 )
 
 // ValidateToken 验证token是否有效
-func ValidateToken(token string, c *gin.Context) bool {
+func ValidateToken(token string) bool {
 	if token == "" {
 		return false
 	}
@@ -52,7 +52,7 @@ func AuthRequired() gin.HandlerFunc {
 			token = parts[1]
 		}
 
-		if !ValidateToken(token, c) {
+		if !ValidateToken(token) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "无效的token"})
 			c.Abort()
 			return
