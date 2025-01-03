@@ -241,11 +241,14 @@ func handleSSHTerminal(c *gin.Context) {
 	}
 
 	token := parts[1]
-	if !middleware.ValidateToken(token) {
+	username, valid := middleware.ValidateToken(token)
+	if !valid {
 		// fileLogger.Printf("无效的token")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "无效的token"})
 		return
 	}
+	// 设置用户名到上下文
+	c.Set("username", username)
 	// fileLogger.Printf("Token验证成功: %s", token)
 
 	// 升级HTTP连接为WebSocket
