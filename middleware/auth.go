@@ -12,14 +12,14 @@ import (
 
 var fileLogger = config.GetLogger()
 
-// ValidateToken 验证token是否有效，并返回用户名
-func ValidateToken(token string) (string, bool) {
+// ValidateToken 验证token是否有效
+func ValidateToken(token string) bool {
 	fileLogger.Printf("\n=== ValidateToken 开始 ===")
 	fileLogger.Printf("输入token: [%s] (长度: %d)", token, len(token))
 
 	if token == "" {
 		fileLogger.Printf("token为空，验证失败")
-		return "", false
+		return false
 	}
 
 	// 验证 token 是否有效
@@ -34,10 +34,7 @@ func ValidateToken(token string) (string, bool) {
 	fileLogger.Printf("- 实际的token: [%s]", token)
 	fileLogger.Printf("- 验证结果: %v", token == expectedToken)
 
-	if token == expectedToken {
-		return config.GlobalConfig.Auth.Username, true
-	}
-	return "", false
+	return token == expectedToken
 }
 
 // AuthRequired 认证中间件
@@ -47,12 +44,6 @@ func AuthRequired() gin.HandlerFunc {
 		fileLogger.Printf("请求路径: %s", c.Request.URL.Path)
 		fileLogger.Printf("请求方法: %s", c.Request.Method)
 		fileLogger.Printf("请求头: %+v", c.Request.Header)
-
-		// 如果是登录请求，直接放行
-		if c.Request.URL.Path == "/api/login" {
-			c.Next()
-			return
-		}
 
 		var token string
 
@@ -85,46 +76,14 @@ func AuthRequired() gin.HandlerFunc {
 		}
 
 		fileLogger.Printf("待验证的token: [%s]", token)
-		username, valid := ValidateToken(token)
-		if !valid {
+		if !ValidateToken(token) {
 			fileLogger.Printf("token验证失败")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "无效的token"})
 			c.Abort()
 			return
 		}
 
-		// 设置用户名到上下文
-		c.Set("username", username)
-		fileLogger.Printf("token验证成功，设置用户名: %s", username)
-		c.Next()
-	}
-}
-
-// AuthMiddleware 验证用户是否已登录
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// 检查是否是登录请求
-		if c.Request.URL.Path == "/api/login" {
-			c.Next()
-			return
-		}
-
-		// 从请求头中获取token
-		token := c.GetHeader("Authorization")
-		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
-			c.Abort()
-			return
-		}
-
-		// 从会话中获取用户名
-		username, exists := c.Get("username")
-		if !exists || username == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
-			c.Abort()
-			return
-		}
-
+		fileLogger.Printf("token验证成功")
 		c.Next()
 	}
 }

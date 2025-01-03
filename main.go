@@ -26,7 +26,7 @@ var fileLogger *log.Logger
 
 func init() {
 	// 创建日志目录
-	logDir := "./log"
+	logDir := "/var/log/gegecp"
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		// log.Fatal("无法创建日志目录:", err)
 	}
@@ -38,11 +38,11 @@ func init() {
 	}
 
 	// 初始化文件日志记录器
-	fileLogger = config.GetLogger() // 使用 config 包中的日志记录器
+	fileLogger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.LstdFlags)
 
-	// 设置gin的日志输出 - 只写入到文件
-	gin.DefaultWriter = logFile
-	gin.DefaultErrorWriter = logFile
+	// 设置gin的日志输出
+	gin.DefaultWriter = io.MultiWriter(os.Stdout, logFile)
+	gin.DefaultErrorWriter = io.MultiWriter(os.Stderr, logFile)
 }
 
 // SSHClientConfig SSH客户端配置
@@ -241,14 +241,11 @@ func handleSSHTerminal(c *gin.Context) {
 	}
 
 	token := parts[1]
-	username, valid := middleware.ValidateToken(token)
-	if !valid {
+	if !middleware.ValidateToken(token) {
 		// fileLogger.Printf("无效的token")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "无效的token"})
 		return
 	}
-	// 设置用户名到上下文
-	c.Set("username", username)
 	// fileLogger.Printf("Token验证成功: %s", token)
 
 	// 升级HTTP连接为WebSocket

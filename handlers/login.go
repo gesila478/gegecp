@@ -54,17 +54,8 @@ func Login(c *gin.Context) {
 	fmt.Printf("登录成功，生成token: %s\n", token)
 
 	c.JSON(http.StatusOK, gin.H{
-		"token":    token,
-		"username": req.Username,
-		"message":  "登录成功",
-		"status":   "success",
-	})
-}
-
-// 退出登录
-func Logout(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "退出成功",
+		"token":   token,
+		"message": "登录成功",
 		"status":  "success",
 	})
 }
