@@ -302,8 +302,8 @@ StartLimitInterval=60
 StartLimitBurst=3
 
 # 日志设置
-StandardOutput=append:/var/log/gegecp/panel.log
-StandardError=append:/var/log/gegecp/error.log
+StandardOutput=append:$INSTALL_DIR/log/panel.log
+StandardError=append:$INSTALL_DIR/log/error.log
 SyslogIdentifier=gegecp
 
 [Install]
@@ -314,12 +314,12 @@ EOF
 chmod +x "$INSTALL_DIR/panel"
 
 # 创建日志目录和文件
-mkdir -p /var/log/gegecp
-touch /var/log/gegecp/panel.log
-touch /var/log/gegecp/error.log
-chmod 755 /var/log/gegecp
-chmod 644 /var/log/gegecp/panel.log
-chmod 644 /var/log/gegecp/error.log
+mkdir -p "$INSTALL_DIR/log"
+touch "$INSTALL_DIR/log/panel.log"
+touch "$INSTALL_DIR/log/error.log"
+chmod 755 "$INSTALL_DIR/log"
+chmod 644 "$INSTALL_DIR/log/panel.log"
+chmod 644 "$INSTALL_DIR/log/error.log"
 
 # 重启服务
 echo "正在启动服务..."
