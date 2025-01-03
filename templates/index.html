@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/js/lib/monaco-editor/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" href="/static/js/lib/xterm/css/xterm.css">
+    <script src="/static/js/lib/vue.min.js"></script>
+    <script src="/static/js/lib/axios.min.js"></script>
+    <script src="/static/js/lib/crypto-js.min.js"></script>
+    <script src="/static/js/lib/xterm/lib/xterm.js"></script>
+    <script src="/static/js/lib/xterm/lib/xterm-addon-fit.js"></script>
+    <script>
+        // 配置Monaco Editor
+        var require = { paths: { vs: '/static/js/lib/monaco-editor/min/vs' } };
+    </script>
+    <script src="/static/js/lib/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        require(['vs/editor/editor.main'], function() {
+            window.monaco_ready = true;
+        });
+    </script>
+    <script type="module" src="/static/js/app.js"></script>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <!-- 登录界面 -->
+        <div v-if="!isLoggedIn" class="login-container">
+            <div class="login-box">
+                <h2>Admin Panel</h2>
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" v-model="loginForm.username" class="form-control" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" v-model="loginForm.password" class="form-control" id="password" required>
+                </div>
+                <button @click="login" class="btn btn-primary">登录</button>
+            </div>
+        </div>
+
+        <!-- 主界面 -->
+        <div v-else>
+            <!-- 顶部导航 -->
+            <div class="header">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Admin Panel
+                </div>
+                <div class="user">
+                    <div class="user-info" @click="toggleUserMenu" style="cursor: pointer; position: relative;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Admin</span>
+                        <!-- 用户菜单 -->
+                        <div v-if="showUserMenu" class="user-menu">
+                            <a @click="showChangePassword = true">修改密码</a>
+                        </div>
+                    </div>
+                    <button @click="logout" style="background-color: #c6c6c6;color: #fff;border-radius: 6px;padding: 0 12px;border: none;cursor: pointer;font-size: 14px;font-weight: 500;transition: all 0.2s;height: 32px;line-height: 32px;display: inline-flex;align-items: center;justify-content: center;gap: 8px;min-width: 80px;">退出</button>
+                </div>
+            </div>
+
+            <div class="main-container">
+                <!-- 侧边栏 -->
+                <div class="sidebar">
+                    <nav>
+                        <a @click="currentView='system'" :class="{active: currentView=='system'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            首页
+                        </a>
+                        <a @click="currentView='files'" :class="{active: currentView=='files'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            文件管理
+                        </a>
+                        <a @click="currentView='process'" :class="{active: currentView=='process'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            进程管理
+                        </a>
+                        <a @click="currentView='terminal'" :class="{active: currentView=='terminal'}">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            SSH终端
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- 主内容区 -->
+                <div class="main">
+                    <!-- 系统信息 -->
+                    <div v-if="currentView=='system'">
+                        <div class="system-info">
+                            <div class="info-card">
+                                <h3>CPU 使用率</h3>
+                                <div class="value">[[formatPercent(systemInfo.cpu.percent)]]</div>
+                                <div class="detail">[[systemInfo.cpu.model]]</div>
+                                <div class="trend" :class="systemInfo.cpu.trend > 0 ? 'up' : 'down'">
+                                    <svg v-if="systemInfo.cpu.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span>[[formatPercent(Math.abs(systemInfo.cpu.trend))]]</span>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <h3>内存使用情况</h3>
+                                <div class="value">[[formatBytes(systemInfo.memory.used)]] / [[formatBytes(systemInfo.memory.total)]]</div>
+                                <div class="detail">[[formatBytes(systemInfo.memory.free)]] 剩余</div>
+                                <div class="trend" :class="systemInfo.memory.trend > 0 ? 'up' : 'down'">
+                                    <svg v-if="systemInfo.memory.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span>[[formatPercent(Math.abs(systemInfo.memory.trend))]]</span>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <h3>磁盘使用情况</h3>
+                                <div class="value">[[formatBytes(systemInfo.disk.used)]] / [[formatBytes(systemInfo.disk.total)]]</div>
+                                <div class="detail">[[formatBytes(systemInfo.disk.free)]] 剩余</div>
+                                <div class="trend" :class="systemInfo.disk.trend > 0 ? 'up' : 'down'">
+                                    <svg v-if="systemInfo.disk.trend > 0" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span>[[formatPercent(Math.abs(systemInfo.disk.trend))]]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件管理 -->
+                    <div v-if="currentView=='files'" class="files-view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Files</h2>
+                                <div class="breadcrumb">
+                                    <span v-for="(part, index) in pathParts" :key="index">
+                                        <a @click="navigateTo(part.path)">[[part.name]]</a>
+                                        <span v-if="index < pathParts.length - 1">/</span>
+                                    </span>
+                                </div>
+                                <div class="actions">
+                                    <button @click="uploadFile" class="btn btn-primary">Upload</button>
+                                    <input type="file" ref="fileInput" style="display: none" @change="handleFileUpload">
+                                </div>
+                            </div>
+                            <!-- 收藏列表 -->
+                            <div v-if="favorites.length > 0" class="favorites-list">
+                                <div class="favorites-header">
+                                    <h3>收藏列表</h3>
+                                </div>
+                                <div class="favorites-content">
+                                    <div v-for="fav in favorites" :key="fav.path" class="favorite-item" 
+                                         @click="handleFavoriteClick(fav)">
+                                        <span class="favorite-icon">
+                                            <svg v-if="fav.isDir" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" 
+                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+                                                      stroke-linejoin="round"/>
+                                            </svg>
+                                            <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7z" 
+                                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+                                                      stroke-linejoin="round"/>
+                                            </svg>
+                                        </span>
+                                        <span class="favorite-name">[[fav.name]]</span>
+                                        <span @click.stop="toggleFavorite(fav)" class="star-icon is-favorite">★</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Permissions</th>
+                                            <th>Size</th>
+                                            <th>Modified</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="file in files" :key="file.path" :data-is-dir="file.isDir">
+                                            <td style="white-space: nowrap;">
+                                                <div class="file-name-container">
+                                                    <a @click="handleFileClick(file)" class="file-link">
+                                                        <i :class="file.isDir ? 'fas fa-folder' : 'fas fa-file'"></i>
+                                                        [[file.name]]
+                                                        <span @click.stop="toggleFavorite(file)" class="star-icon" :class="{'is-favorite': isFavorite(file)}">
+                                                            [[isFavorite(file) ? '★' : '☆']]
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td><code @click="showPermissionModal(file)">[[file.permissions]]</code></td>
+                                            <td>[[formatBytes(file.size)]]</td>
+                                            <td>[[formatDate(file.modTime)]]</td>
+                                            <td>
+                                                <div class="file-actions">
+                                                    <a @click="editFile(file)" v-if="!file.isDir" class="action-link">
+                                                        <i class="fas fa-edit"></i>
+                                                        编辑
+                                                    </a>
+                                                    <a @click="downloadFile(file)" v-if="!file.isDir" class="action-link">
+                                                        <i class="fas fa-download"></i>
+                                                        下载
+                                                    </a>
+                                                    <a @click="deleteFile(file)" class="action-link">
+                                                        <i class="fas fa-trash"></i>
+                                                        删除
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 进程管理 -->
+                    <div v-if="currentView=='process'" class="files-view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Processes</h2>
+                                <div class="actions">
+                                    <button @click="listProcesses" class="btn btn-primary">
+                                        <i class="fas fa-sync"></i>
+                                        刷新
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>PID</th>
+                                            <th>CPU</th>
+                                            <th>Memory</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="process in processes" :key="process.pid">
+                                            <td>[[process.name]]</td>
+                                            <td>[[process.pid]]</td>
+                                            <td>[[formatPercent(process.cpu)]]</td>
+                                            <td>[[formatBytes(process.memory)]]</td>
+                                            <td>
+                                                <span class="status-badge" :class="process.status">[[process.status]]</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button @click="killProcess(process)" class="danger small btn-danger">
+                                                        <i class="fas fa-times"></i>
+                                                        终止
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SSH终端 -->
+                    <div v-if="currentView=='terminal'" class="content-card">
+                        <div class="card-header">
+                            <h2>SSH Terminal</h2>
+                            <div class="ssh-form" v-if="!sshConnected">
+                                <input type="text" v-model="sshConfig.host" placeholder="主机地址:端口">
+                                <input type="text" v-model="sshConfig.user" placeholder="用户名">
+                                <input type="password" v-model="sshConfig.password" placeholder="密码">
+                                <button @click="connectSSH" class="btn btn-primary">连接</button>
+                            </div>
+                            <button v-else @click="disconnectSSH" class="btn btn-danger">断开连接</button>
+                        </div>
+                        <div class="card-body terminal-container">
+                            <div id="terminal"></div>
+                        </div>
+                    </div>
+
+                    <!-- 进程列表 -->
+                    <div v-if="currentView=='processes'" class="processes-view">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Processes</h2>
+                                <div class="actions">
+                                    <button @click="listProcesses" class="btn btn-primary">Refresh</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>PID</th>
+                                            <th>Name</th>
+                                            <th>CPU</th>
+                                            <th>Memory</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="process in processes" :key="process.pid">
+                                            <td>[[process.pid]]</td>
+                                            <td>[[process.name]]</td>
+                                            <td>[[formatPercent(process.cpu)]]</td>
+                                            <td>[[formatBytes(process.memory)]]</td>
+                                            <td>[[process.status]]</td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button @click="killProcess(process)" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件编辑器 -->
+                    <div v-if="isEditing" class="editor-modal">
+                        <div class="editor-container">
+                            <div class="editor-header">
+                                <h3>编辑文件: [[currentEditingFile.name]]</h3>
+                                <div class="editor-actions">
+                                    <button @click="saveFile" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        保存
+                                    </button>
+                                    <button @click="cancelEdit" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i>
+                                        取消
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="editor"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 编辑弹窗 -->
+            <div v-if="isEditing && currentEditingFile" class="modal">
+                <div class="modal-overlay" @click="cancelEdit"></div>
+                <div class="modal-container" :class="{'is-maximized': isEditorMaximized}">
+                    <div class="modal-header">
+                        <h3>编辑文件: [[currentEditingFile.name]]</h3>
+                        <div class="modal-actions">
+                            <button @click="saveFile" style="min-width: 0px;line-height: 22px;height: 27px;">保存</button>
+                            <!-- <button class="secondary" @click="cancelEdit">取消</button> -->
+                            <button class="window-btn minimize" @click="minimizeEditor">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                            <button class="window-btn maximize" @click="toggleEditorMaximize" :class="{'is-maximized': isEditorMaximized}">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </button>
+                            <button class="window-btn close" @click="cancelEdit" :class="{'is-maximized': isEditorMaximized}">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modal-editor"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 修改密码弹窗 -->
+            <div v-if="showChangePassword" class="modal">
+                <div class="modal-overlay" @click="showChangePassword = false" style="background-color: rgba(0, 0, 0, 0.3);"></div>
+                <div class="pc-container password-modal">
+                    <div class="modal-header">
+                        <h3>修改密码</h3>
+                        <button class="close-btn" @click="showChangePassword = false">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>当前密码</label>
+                            <input type="password" v-model="passwordForm.oldPassword" class="form-control" placeholder="请输入当前密码">
+                        </div>
+                        <div class="form-group">
+                            <label>新密码</label>
+                            <input type="password" v-model="passwordForm.newPassword" class="form-control" placeholder="请输入新密码">
+                        </div>
+                        <div class="form-group">
+                            <label>确认新密码</label>
+                            <input type="password" v-model="passwordForm.confirmPassword" class="form-control" placeholder="请再次输入新密码">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="showChangePassword = false" class="btn btn-secondary">取消</button>
+                        <button @click="changePassword" class="btn btn-primary">确认</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 权限设置弹窗 -->
+            <div v-if="showPermissions" class="modal">
+                <div class="modal-overlay" @click="showPermissions = false"></div>
+                <div class="permission-modal">
+                    <div class="modal-header">
+                        <h3>权限设置: [[currentFile.name]]</h3>
+                        <button class="close-btn" style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="showPermissions = false">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="permission-groups">
+                            <div class="permission-group">
+                                <h4>所有者</h4>
+                                <label><input type="checkbox" v-model="permissions.owner.read"> 读取</label>
+                                <label><input type="checkbox" v-model="permissions.owner.write"> 写入</label>
+                                <label><input type="checkbox" v-model="permissions.owner.execute"> 执行</label>
+                            </div>
+                            <div class="permission-group">
+                                <h4>用户组</h4>
+                                <label><input type="checkbox" v-model="permissions.group.read"> 读取</label>
+                                <label><input type="checkbox" v-model="permissions.group.write"> 写入</label>
+                                <label><input type="checkbox" v-model="permissions.group.execute"> 执行</label>
+                            </div>
+                            <div class="permission-group">
+                                <h4>其他用户</h4>
+                                <label><input type="checkbox" v-model="permissions.others.read"> 读取</label>
+                                <label><input type="checkbox" v-model="permissions.others.write"> 写入</label>
+                                <label><input type="checkbox" v-model="permissions.others.execute"> 执行</label>
+                            </div>
+                        </div>
+                        <div class="permission-preview">
+                            <div class="preview-row">
+                                <span>权限预览: <code>[[permissionString]]</code></span>
+                                <label v-if="currentFile && currentFile.isDir" class="recursive-checkbox">
+                                    <input type="checkbox" v-model="permissions.recursive">
+                                    应用到子目录
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="showPermissions = false">取消</button>
+                        <button style="background: #18306de3;min-width: 32px;min-height: 32px;" @click="savePermissions" class="primary">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+
+        /* 设置始终显示滚动条 */
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+
+
+        .processes-view {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        .processes-view .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .processes-view .card-body {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        .processes-view .table-responsive {
+            height: 100%;
+        }
+
+        .processes-view .table {
+            margin-bottom: 0;
+        }
+
+        .processes-view .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .processes-view .table th {
+            position: sticky;
+            top: 0;
+            background: #f8f9fa;
+            z-index: 1;
+        }
+
+        .processes-view .btn-danger {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 8px 0;
+            min-width: 120px;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .user-menu a {
+            display: block;
+            padding: 8px 16px;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .user-menu a:hover {
+            background: #f5f5f5;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            text-align: right;
+            border-top: 1px solid #ddd;
+        }
+
+        .modal-footer button {
+            margin-left: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .password-modal {
+            max-width: 400px;
+            min-height: auto !important;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .password-modal .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .password-modal .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .password-modal .modal-body {
+            padding: 24px;
+        }
+
+        .password-modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .password-modal .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .password-modal .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .password-modal .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+
+        .password-modal .form-control:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+
+        .password-modal .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+
+        .password-modal .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .password-modal .btn-primary {
+            background-color: #4a9eff;
+            color: white;
+        }
+
+        .password-modal .btn-primary:hover {
+            background-color: #3d8be0;
+        }
+
+        .password-modal .btn-secondary {
+            background-color: #f5f5f5;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .password-modal .btn-secondary:hover {
+            background-color: #e8e8e8;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .password-modal {
+            position: relative;
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .password-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .password-modal .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .password-modal .close-btn {
+            padding: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .password-modal .close-btn:hover {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .password-modal .modal-body {
+            padding: 20px;
+            background: white;
+        }
+
+        .password-modal .form-group {
+            margin-bottom: 16px;
+        }
+
+        .password-modal .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .password-modal .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .password-modal .form-control {
+            width: 100%;
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .password-modal .form-control:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+
+        .password-modal .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .password-modal .btn {
+            min-width: 68px;
+            height: 32px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-modal .btn-primary {
+            background-color: #4a9eff;
+            color: white;
+        }
+
+        .password-modal .btn-primary:hover {
+            background-color: #3d8be0;
+        }
+
+        .password-modal .btn-secondary {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .password-modal .btn-secondary:hover {
+            background-color: #e8e8e8;
+        }
+
+        .favorites-list {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 8px 16px;
+        }
+
+        .favorites-header {
+            margin-bottom: 6px;
+        }
+
+        .favorites-header h3 {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+
+        .favorites-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .favorite-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        .favorite-item:hover {
+            background: #f5f5f5;
+        }
+
+        .favorite-icon {
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .favorite-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .favorite-name {
+            color: #333;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .favorite-item .star-icon {
+            font-size: 14px;
+            margin-left: 2px;
+        }
+
+        .star-icon {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .star-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .star-icon.is-favorite {
+            color: #ffd700;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            color: #333;
+        }
+
+        .star-filled {
+            color: #ffd700;
+        }
+
+        .btn-group .btn-icon {
+            margin-left: 8px;
+        }
+
+        /* 提示消息样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            padding: 12px 24px;
+            background: rgba(28, 51, 181, 0.704);
+            color: white;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.1s ease;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .star-icon {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .star-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .star-icon.is-favorite {
+            color: #ffd700;
+        }
+
+        .file-name-container {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .star-icon {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .star-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .star-icon.is-favorite {
+            color: #ffd700;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .action-link {
+            color: #20308e;
+            cursor: pointer;
+            font-size: 13px;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+            white-space: nowrap;
+            background-color: azure;
+        }
+
+        .action-link:hover {
+            color: #333;
+        }
+
+        .action-link i {
+            font-size: 14px;
+        }
+
+        /* 文件权限样式 */
+        td code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        /* 目录权限特殊显示 */
+        tr[data-is-dir="true"] td code {
+            color: #2c5282;
+            background-color: #ebf8ff;
+        }
+
+        /* 可执行文件权限特殊显示 */
+        td code:contains("x") {
+            color: #2f855a;
+            background-color: #f0fff4;
+        }
+
+        .permission-modal {
+            position: relative;
+            width: 480px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .permission-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .permission-group {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 6px;
+        }
+
+        .permission-group h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .permission-group label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .permission-group input[type="checkbox"] {
+            margin-right: 6px;
+        }
+
+        .permission-preview {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .permission-preview .preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .permission-preview code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+
+        .recursive-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .recursive-checkbox input[type="checkbox"] {
+            margin: 0;
+        }
+
+        td code {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        td code:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</body>
+</html> 

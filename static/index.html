@@ -1,0 +1,55 @@
+<!-- 权限设置对话框 -->
+<div class="dialog" v-if="showPermissionDialog">
+    <div class="dialog-content">
+        <h3>权限设置</h3>
+        <div class="permission-grid">
+            <div class="permission-row">
+                <span class="permission-label">所有者</span>
+                <label><input type="checkbox" v-model="permissions.owner.read">读取</label>
+                <label><input type="checkbox" v-model="permissions.owner.write">写入</label>
+                <label><input type="checkbox" v-model="permissions.owner.execute">执行</label>
+            </div>
+            <div class="permission-row">
+                <span class="permission-label">用户组</span>
+                <label><input type="checkbox" v-model="permissions.group.read">读取</label>
+                <label><input type="checkbox" v-model="permissions.group.write">写入</label>
+                <label><input type="checkbox" v-model="permissions.group.execute">执行</label>
+            </div>
+            <div class="permission-row">
+                <span class="permission-label">公共</span>
+                <label><input type="checkbox" v-model="permissions.public.read">读取</label>
+                <label><input type="checkbox" v-model="permissions.public.write">写入</label>
+                <label><input type="checkbox" v-model="permissions.public.execute">执行</label>
+            </div>
+        </div>
+        <div class="permission-mode">
+            <label>权限数值：<input type="text" v-model="permissionMode" maxlength="3" pattern="[0-7]{3}"></label>
+        </div>
+        <div class="dialog-buttons">
+            <button @click="savePermissions">保存</button>
+            <button @click="showPermissionDialog = false">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 文件操作菜单 -->
+<div class="context-menu" v-if="showContextMenu" :style="contextMenuStyle">
+    <div class="menu-item" @click="handleMenuClick('open')">
+        <i class="fas fa-folder-open"></i> 打开
+    </div>
+    <div class="menu-item" @click="handleMenuClick('edit')">
+        <i class="fas fa-edit"></i> 编辑
+    </div>
+    <div class="menu-item" @click="handleMenuClick('download')">
+        <i class="fas fa-download"></i> 下载
+    </div>
+    <div class="menu-item" @click="handleMenuClick('delete')">
+        <i class="fas fa-trash"></i> 删除
+    </div>
+    <div class="menu-item" @click="handleMenuClick('favorite')">
+        <i class="fas fa-star"></i> 收藏
+    </div>
+    <div class="menu-item" @click="handleMenuClick('chmod')">
+        <i class="fas fa-key"></i> 权限设置
+    </div>
+</div> 

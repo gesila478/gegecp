@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  host: 0.0.0.0
+  
+auth:
+  # 登录凭证由安装脚本动态生成
+  username: ""
+  password: ""
+  
+# 系统设置
+system:
+  # 允许访问的目录
+  allowed_paths:
+    - /home
+    - /var/www
+    - /opt
+  
+  # 禁止访问的目录
+  forbidden_paths:
+    - /root
+    - /etc/shadow
+    - /etc/passwd
+
+  # 日志设置
+  log:
+    path: /var/log/linux-panel
+    level: info 

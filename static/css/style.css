@@ -1,0 +1,1108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+    line-height: 1.4;
+    min-width: 1200px;
+    height: 100vh;
+}
+
+/* 登录页面 */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background: #f5f6fa;
+}
+
+.login-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 350px;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-primaryy {
+    /* width: 100%; */
+    padding: 10px;
+    background: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primaryy:hover {
+    background: #0056b3;
+}
+
+/* 主界面布局 */
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* 顶部导航 */
+.header {
+    height: 60px;
+    background: #fff;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5e9f2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2B3674;
+}
+
+.header .user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #2B3674;
+}
+
+/* 主容器 */
+.main-container {
+    display: flex;
+    min-height: calc(100vh - 60px);
+    margin-top: 60px;
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 220px;
+    background: white;
+    border-right: 1px solid #e5e9f2;
+    height: calc(100vh - 60px);
+    position: fixed;
+    left: 0;
+    top: 60px;
+}
+
+nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #2B3674;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 12px;
+}
+
+nav a:hover {
+    background: #f6f8fd;
+    color: #4318FF;
+}
+
+nav a.active {
+    color: #4318FF;
+    background: #f6f8fd;
+    border-right: 3px solid #4318FF;
+}
+
+/* 内容区域 */
+.main {
+    flex: 1;
+    margin-left: 220px;
+    background: #f5f6fa;
+    min-width: 980px;
+    padding: 24px;
+}
+
+/* 系统信息卡片 */
+.system-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.info-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.info-card h3 {
+    color: #A3AED0;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.info-card .value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2B3674;
+    margin-bottom: 8px;
+}
+
+.info-card .detail {
+    font-size: 14px;
+    color: #A3AED0;
+}
+
+.info-card .trend {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.trend.up {
+    color: #05CD99;
+}
+
+.trend.down {
+    color: #EE5D50;
+}
+
+/* 内容卡片 */
+.content-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+}
+
+.card-header {
+    padding: 4px 6px;
+    border-bottom: 1px solid #e5e9f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2B3674;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* 文件管理器 */
+.file-tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.file-path {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #2B3674;
+    font-size: 13px;
+}
+
+.file-path input {
+    height: 32px;
+    font-size: 13px;
+}
+
+.file-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.file-list th {
+    padding: 8px 12px;
+    font-size: 12px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e9f2;
+    border-bottom: 1px solid #e5e9f2;
+}
+
+.file-list td {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #e5e9f2;
+}
+
+.file-list tr:hover {
+    background: #f8fafc;
+    cursor: pointer;
+}
+
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.file-icon {
+    color: #A3AED0;
+}
+
+.file-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.file-actions button {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 13px;
+    min-width: 70px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.file-actions button i {
+    font-size: 14px;
+}
+
+/* 进程列表 */
+.process-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.process-list th,
+.process-list td {
+    padding: 4px 6px;
+    text-align: left;
+    border-bottom: 1px solid #e5e9f2;
+    font-size: 14px;
+}
+
+.process-list th {
+    font-weight: 500;
+    color: #2B3674;
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.process-list td {
+    color: #2B3674;
+}
+
+.process-list tr:hover {
+    background: #f8fafc;
+}
+
+/* 进程状态样式 */
+.status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status.running {
+    background: #E6FFF3;
+    color: #05CD99;
+}
+
+.status.sleeping {
+    background: #E6F4FF;
+    color: #0085FF;
+}
+
+.status.stopped {
+    background: #FFE6E6;
+    color: #FF0000;
+}
+
+.status.zombie {
+    background: #FFE6F4;
+    color: #FF00A8;
+}
+
+.status.unknown {
+    background: #F5F5F5;
+    color: #666666;
+}
+
+/* 按钮样式 */
+button {
+    padding: 0 12px;
+    border: none;
+    border-radius: 6px;
+    background: #1a6d18e3;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    height: 32px;
+    line-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 80px;
+}
+
+buttonw {
+    padding: 0 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4318FF;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    height: 32px;
+    line-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 80px;
+}
+buttonpt {
+    padding: 0 12px;
+    border: none;
+    border-radius: 6px;
+    background: #c6c6c6;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    height: 32px;
+    line-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 80px;
+}
+
+button:hover {
+    background: #3311DB;
+}
+
+button.secondary {
+    background: #f6f8fd;
+    color: #4318FF;
+    border: 1px solid #e5e9f2;
+}
+
+button.secondary:hover {
+    background: #edf0f7;
+}
+
+button.danger {
+    background: #EE5D50;
+}
+
+button.danger:hover {
+    background: #DC4C40;
+}
+
+/* 输入框样式 */
+input[type="text"] {
+    padding: 0 12px;
+    border: 1px solid #e5e9f2;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 36px;
+    background: #f8fafc;
+    min-width: 200px;
+}
+input[type="password"] {
+    padding: 0 12px;
+    border: 1px solid #e5e9f2;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 36px;
+    background: #f8fafc;
+    min-width: 200px;
+}
+input[type="text"]:focus {
+    border-color: #4318FF;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(67,24,255,0.1);
+    outline: none;
+}
+
+/* 编辑器样式 */
+.editor-container {
+    position: relative;
+    height: 100%;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+#editor {
+    width: 100%;
+    height: 100%;
+}
+
+/* 弹出窗口样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-container {
+    position: relative;
+    background: white;
+    width: 90%;
+    max-width: 1400px;
+    height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1200;
+    transition: all 0.3s ease;
+}
+.pc-container {
+    position: relative;
+    background: white;
+    width: 90%;
+    max-width: 1400px;
+    /* height: 90vh; */
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1200;
+    transition: all 0.3s ease;
+}
+
+.modal-container.is-maximized {
+    width: 100%;
+    height: 100vh;
+    max-width: none;
+    border-radius: 0;
+}
+
+.modal-header {
+    padding: 4px 6px;
+    border-bottom: 1px solid #e5e9f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2B3674;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.modal-actions .window-btn {
+    width: 28px;
+    height: 28px;
+    min-width: unset;
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    background: transparent;
+    color: #2B3674;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-actions .window-btn:hover {
+    background: #f6f8fd;
+    color: #4318FF;
+}
+
+.modal-actions .window-btn.minimize:hover {
+    color: #FFB547;
+}
+
+.modal-actions .window-btn.maximize:hover {
+    color: #05CD99;
+}
+
+.modal-actions .window-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.modal-actions .window-btn.minimize svg {
+    margin-top: 2px;
+}
+
+.modal-actions .window-btn.maximize.is-maximized svg rect {
+    x: 4;
+    y: 4;
+    width: 8;
+    height: 8;
+}
+
+.modal-body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: #ffffff;
+}
+
+#modal-editor {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 小按钮样式 */
+button.small {
+    height: 24px;
+    padding: 0 8px;
+    font-size: 12px;
+    min-width: 60px;
+}
+
+button.small svg {
+    width: 14px;
+    height: 14px;
+}
+/* 小按钮样式 */
+button.smalla {
+    height: 16px;
+    padding: 0 0;
+    font-size: 12px;
+    min-width: 50px;
+}
+
+button.smalla svg {
+    width: 14px;
+    height: 14px;
+}
+/* 文件列表样式优化 */
+.file-list th:last-child,
+.file-list td:last-child {
+    text-align: right;
+    width: 120px;
+}
+
+.file-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+/* 确保编辑器内容可见 */
+.monaco-editor {
+    padding: 0;
+    margin: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.monaco-editor .overflow-guard {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 删除终端相关样式 */
+.terminal-view,
+.terminal-container,
+#terminal {
+    display: block;
+}
+
+/* 保留其他样式 */ 
+
+.terminal-container {
+    width: 100%;
+    height: calc(100vh - 200px);
+    background: #1e1e1e;
+    padding: 10px;
+    /* border-radius: 4px; */
+    overflow: hidden;
+}
+
+#terminal {
+    width: 100%;
+    height: 100%;
+    background: #1e1e1e;
+}
+
+.terminal {
+    padding: 10px;
+}
+
+.ssh-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    /* margin-bottom: 15px; */
+}
+
+.ssh-form input {
+    width: 200px;
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #e5e9f2;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.ssh-form input:focus {
+    border-color: #4318FF;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(67, 24, 255, 0.1);
+}
+
+/* 文件管理器 */
+.files-view {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.files-view .card {
+    height: 100%;
+}
+
+.files-view .card-header {
+    padding: 4px 6px;
+    border-bottom: 1px solid #e5e9f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.files-view .card-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2B3674;
+}
+
+.files-view .card-body {
+    padding: 0;
+}
+
+.files-view .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #2B3674;
+    flex: 1;
+    margin: 0 20px;
+}
+
+.files-view .breadcrumb a {
+    color: #4318FF;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.files-view .breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.files-view .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.files-view .table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.files-view .table th,
+.files-view .table td {
+    padding: 4px 6px;
+    text-align: left;
+    border-bottom: 1px solid #e5e9f2;
+}
+
+.files-view .table th {
+    font-weight: 500;
+    color: #A3AED0;
+    background: #f8fafc;
+}
+
+.files-view .table td {
+    color: #2B3674;
+    font-size: 14px;
+}
+
+.files-view .table tr:hover td {
+    background: #f6f8fd;
+}
+
+.files-view .file-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2B3674;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.files-view .file-link:hover {
+    color: #4318FF;
+}
+
+.files-view .btn-group {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.files-view .btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.files-view .btn-primary {
+    background: #4318FF;
+    color: white;
+}
+
+.files-view .btn-primaryy {
+    background: #0c9a2d;
+    color: white;
+}
+
+.files-view .btn-warning {
+    background: #FFB547;
+    color: white;
+}
+
+.files-view .btn-danger {
+    background: #EE5D50;
+    color: white;
+}
+
+.files-view .btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* 文件编辑器模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body {
+    flex: 1;
+    min-height: 0;
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e9f2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+#modal-editor {
+    height: 60vh;
+    border: 1px solid #e5e9f2;
+    /* border-radius: 4px; */
+}
+
+/* 文件和文件夹图标样式 */
+.files-view .file-link i.fa-folder {
+    color: #FFB547;
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.files-view .file-link i.fa-file {
+    color: #A3AED0;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+/* 文件夹样式 */
+.files-view tr[data-is-dir="true"] .file-link {
+    color: #1E40AF;
+    font-weight: 600;
+}
+
+/* 文件样式 */
+.files-view tr[data-is-dir="false"] .file-link {
+    color: #6B7280;
+}
+
+.files-view .file-link:hover {
+    color: #4318FF !important;
+}
+
+/* 文件和文件夹样式 */
+.files-view .table td .file-link {
+    color: #6B7280;  /* 默认文件颜色为灰色 */
+    font-weight: normal;
+}
+
+.files-view .table tr[data-is-dir="true"] td .file-link {
+    color: #2563EB !important;  /* 文件夹使用亮蓝色 */
+    font-weight: 600;
+}
+
+.files-view .table td .file-link:hover {
+    color: #4318FF !important;
+}
+
+/* 图标样式 */
+.files-view .table td .file-link i.fa-folder {
+    color: #FFB547;
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.files-view .table td .file-link i.fa-file {
+    color: #A3AED0;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+/* 窗口控制按钮 */
+.window-controls {
+    display: flex;
+    gap: 8px;
+    margin-right: 20px;
+}
+
+.window-btn {
+    width: 32px;
+    height: 32px;
+    min-width: unset;
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    background: transparent;
+    color: #2B3674;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.window-btn:hover {
+    background: #f6f8fd;
+    color: #4318FF;
+}
+
+.window-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.window-btn.minimize svg {
+    margin-top: 2px;
+}
+
+/* 最大化状态下的按钮图标 */
+.window-btn.maximize.is-maximized svg rect {
+    x: 4;
+    y: 4;
+    width: 8;
+    height: 8;
+} 
+
+/* 进程状态标签 */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-badge.running {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.status-badge.sleeping {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
+
+.status-badge.stopped {
+    background-color: #fce8e6;
+    color: #d93025;
+}
+
+.status-badge.zombie {
+    background-color: #fef7e0;
+    color: #f9ab00;
+}
+
+.status-badge.unknown {
+    background-color: #f1f3f4;
+    color: #5f6368;
+} 
+
+.files-view .table th:last-child,
+.files-view .table td:last-child {
+    text-align: right;
+    width: 120px;
+}
+
+.files-view .btn-group {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+} 
+
+.modal-actions .window-btn.close {
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.modal-actions .window-btn.close:hover {
+    background: #ff4d4f;
+    color: white;
+    border-color: #ff4d4f;
+}
+
+.modal-actions .window-btn.close svg {
+    transform: scale(1.1);
+} 
