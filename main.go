@@ -402,8 +402,14 @@ func handleLocalTerminal(ws *websocket.Conn) {
 }
 
 func main() {
+	// 设置为生产模式
+	gin.SetMode(gin.ReleaseMode)
+
 	// 初始化路由
 	r := gin.Default()
+
+	// 设置受信任的代理
+	r.SetTrustedProxies([]string{"127.0.0.1"})
 
 	// 加载配置文件
 	if err := config.LoadConfig("config/config.yaml"); err != nil {
