@@ -202,7 +202,7 @@ log "正在下载面板源码..."
 # 创建临时目录并克隆代码
 TMP_DIR=$(mktemp -d)
 echo "正在克隆最新代码..."
-git clone --depth=1 --branch main https://github.com/gesila478/gegecp.git "$TMP_DIR"
+git clone --depth=1 --branch main https://hub.fastgit.org/gesila478/gegecp.git "$TMP_DIR"
 cd "$TMP_DIR"
 
 # 确保获取最新代码
