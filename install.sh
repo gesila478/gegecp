@@ -31,7 +31,7 @@ handle_error() {
 # 设置错误处理
 trap 'handle_error' ERR
 
-echo -e "${GREEN}开始安装 Linux 管理面板..............................${NC}"
+echo -e "${GREEN}开始安装 Linux 管理面板......${NC}"
 
 # 检查是否为 root 用户
 if [ "$EUID" -ne 0 ]; then 
@@ -197,7 +197,7 @@ log "正在下载面板源码..."
 # 创建临时目录并克隆代码
 TMP_DIR=$(mktemp -d)
 echo "正在克隆最新代码..."
-git clone --depth=1 --branch main https://github.com/gesila478/Gegecp.git "$TMP_DIR"
+git clone --depth=1 --branch main https://github.com/gesila478/gegecp.git "$TMP_DIR"
 cd "$TMP_DIR"
 
 # 确保获取最新代码
