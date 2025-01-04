@@ -237,52 +237,7 @@ echo "正在复制前端文件..."
 cp -rf "$TMP_DIR/templates/"* "$INSTALL_DIR/templates/"
 cp -rf "$TMP_DIR/static/"* "$INSTALL_DIR/static/"
 
-# # 调试信息
-# echo "源目录内容:"
-# ls -la "$TMP_DIR/templates"
-# ls -la "$TMP_DIR/static"
-# echo "目标目录内容:"
-# ls -la "$INSTALL_DIR/templates"
-# ls -la "$INSTALL_DIR/static"
-
-# # 下载第三方库到本地
-# echo "正在下载第三方库..."
-# cd "$INSTALL_DIR/static/js/lib"
-
-# # 下载 Vue.js
-# wget -O vue.min.js https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js
-
-# # 下载 Axios
-# wget -O axios.min.js https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js
-
-# # 下载 CryptoJS
-# wget -O crypto-js.min.js https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
-
-# 下载Monaco Editor文件
-# echo "正在下载Monaco Editor..."
-# MONACO_VERSION="0.33.0"
 MONACO_BASE="$INSTALL_DIR/static/js/lib/monaco-editor"
-# mkdir -p "$MONACO_BASE/min/vs/base/worker"
-# mkdir -p "$MONACO_BASE/min/vs/editor"
-# mkdir -p "$MONACO_BASE/min/vs/basic-languages"
-
-# 下载基础文件
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/loader.js" -o "$MONACO_BASE/min/vs/loader.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/editor/editor.main.js" -o "$MONACO_BASE/min/vs/editor/editor.main.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/editor/editor.main.css" -o "$MONACO_BASE/min/vs/editor/editor.main.css"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/editor/editor.main.nls.js" -o "$MONACO_BASE/min/vs/editor/editor.main.nls.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/base/worker/workerMain.js" -o "$MONACO_BASE/min/vs/base/worker/workerMain.js"
-
-# 下载语言支持
-# mkdir -p "$MONACO_BASE/min/vs/basic-languages/javascript"
-# mkdir -p "$MONACO_BASE/min/vs/basic-languages/css"
-# mkdir -p "$MONACO_BASE/min/vs/basic-languages/html"
-# mkdir -p "$MONACO_BASE/min/vs/basic-languages/shell"
-
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/basic-languages/javascript/javascript.js" -o "$MONACO_BASE/min/vs/basic-languages/javascript/javascript.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/basic-languages/css/css.js" -o "$MONACO_BASE/min/vs/basic-languages/css/css.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/basic-languages/html/html.js" -o "$MONACO_BASE/min/vs/basic-languages/html/html.js"
-# curl -L "https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}/min/vs/basic-languages/shell/shell.js" -o "$MONACO_BASE/min/vs/basic-languages/shell/shell.js"
 
 # 确保文件权限正确
 chmod -R 644 "$MONACO_BASE"
@@ -428,8 +383,3 @@ echo -e "\n${GREEN}重要提示：${NC}"
 echo "1. 如果更新后页面没有变化，请按 Ctrl+F5 强制刷新页面"
 echo "2. 或者清除浏览器缓存后重新访问"
 echo "3. 请登录后立即修改默认密码"
-
-# 删除重复的密码保存代码
-# echo "用户名: ${DEFAULT_USER}" > "$INSTALL_DIR/password.txt"
-# echo "密码: ${DEFAULT_PASS}" >> "$INSTALL_DIR/password.txt"
-# chmod 600 "$INSTALL_DIR/password.txt" 
