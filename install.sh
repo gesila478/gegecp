@@ -126,9 +126,9 @@ if ! command -v go &> /dev/null; then
     
     # 定义下载镜像源
     MIRRORS=(
+        "https://mirrors.aliyun.com/golang"
         "https://golang.google.cn/dl"
         "https://gomirrors.org/dl"
-        "https://mirrors.aliyun.com/golang"
         "https://mirrors.ustc.edu.cn/golang"
     )
     
@@ -202,7 +202,46 @@ log "正在下载面板源码..."
 # 创建临时目录并克隆代码
 TMP_DIR=$(mktemp -d)
 echo "正在克隆最新代码..."
-git clone --depth=1 --branch main https://hub.fastgit.org/gesila478/gegecp.git "$TMP_DIR"
+
+# 定义 Git 镜像源
+MIRRORS=(
+    "https://hub.fastgit.org/gesila478/gegecp.git"
+    "https://gitclone.com/github.com/gesila478/gegecp.git"
+    "https://github.moeyy.xyz/https://github.com/gesila478/gegecp.git"
+    "https://ghproxy.com/https://github.com/gesila478/gegecp.git"
+)
+
+# 克隆函数
+clone_repo() {
+    local url=$1
+    local dir=$2
+    echo "尝试从 $url 克隆..."
+    if git clone --depth=1 --branch main "$url" "$dir" 2>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 尝试从不同镜像源克隆
+CLONE_SUCCESS=false
+for mirror in "${MIRRORS[@]}"; do
+    if clone_repo "$mirror" "$TMP_DIR"; then
+        CLONE_SUCCESS=true
+        echo "从 $mirror 克隆成功"
+        break
+    else
+        echo "从 $mirror 克隆失败，尝试下一个镜像"
+        rm -rf "$TMP_DIR"
+        mkdir -p "$TMP_DIR"
+    fi
+done
+
+if [ "$CLONE_SUCCESS" = false ]; then
+    echo -e "${RED}所有镜像源克隆失败，请检查网络连接${NC}"
+    exit 1
+fi
+
 cd "$TMP_DIR"
 
 # 确保获取最新代码
