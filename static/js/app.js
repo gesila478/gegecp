@@ -27,8 +27,24 @@ new Vue({
                 used: 0,
                 free: 0,
                 trend: 0
+            },
+            network: {
+                sent: 0,
+                recv: 0,
+                sent_speed: 0,
+                recv_speed: 0,
+                trend: 0
             }
         },
+        // 添加系统负载历史数据
+        loadHistory: {
+            cpu: [],
+            memory: [],
+            disk: [],
+            network: [],
+            timestamps: []
+        },
+        loadChart: null,
         processes: [],
         token: localStorage.getItem('token') || '',
         files: [],
@@ -185,7 +201,8 @@ new Vue({
             this.systemInfo = {
                 cpu: { percent: 0, model: '', trend: 0 },
                 memory: { total: 0, used: 0, free: 0, trend: 0 },
-                disk: { total: 0, used: 0, free: 0, trend: 0 }
+                disk: { total: 0, used: 0, free: 0, trend: 0 },
+                network: { sent: 0, recv: 0, sent_speed: 0, recv_speed: 0, trend: 0 }
             };
             this.processes = [];
             this.files = [];
@@ -215,6 +232,7 @@ new Vue({
                 const oldCpuPercent = Number(this.systemInfo.cpu.percent) || 0;
                 const oldMemoryPercent = this.systemInfo.memory.used / this.systemInfo.memory.total * 100 || 0;
                 const oldDiskPercent = this.systemInfo.disk.used / this.systemInfo.disk.total * 100 || 0;
+                const oldNetworkSpeed = (this.systemInfo.network.sent_speed + this.systemInfo.network.recv_speed) / (1024 * 1024) || 0;
 
                 this.systemInfo = {
                     cpu: {
@@ -233,8 +251,32 @@ new Vue({
                         used: Number(response.disk.used || 0),
                         free: Number(response.disk.free || 0),
                         trend: Number((response.disk.used / response.disk.total * 100) - oldDiskPercent || 0)
+                    },
+                    network: {
+                        sent: Number(response.network.sent || 0),
+                        recv: Number(response.network.recv || 0),
+                        sent_speed: Number(response.network.sent_speed || 0),
+                        recv_speed: Number(response.network.recv_speed || 0),
+                        trend: Number(((response.network.sent_speed + response.network.recv_speed) / (1024 * 1024)) - oldNetworkSpeed || 0)
                     }
                 };
+
+                // 更新历史数据
+                if (response.history) {
+                    this.loadHistory.timestamps = response.history.map(item => {
+                        const date = new Date(item.Timestamp);
+                        return date.getHours().toString().padStart(2, '0') + ':' +
+                               date.getMinutes().toString().padStart(2, '0') + ':' +
+                               date.getSeconds().toString().padStart(2, '0');
+                    });
+                    this.loadHistory.cpu = response.history.map(item => Number(item.CPU).toFixed(1));
+                    this.loadHistory.memory = response.history.map(item => Number(item.Memory).toFixed(1));
+                    this.loadHistory.disk = response.history.map(item => Number(item.Disk).toFixed(1));
+                    this.loadHistory.network = response.history.map(item => Number(item.Network).toFixed(2));
+                }
+
+                // 更新图表
+                this.updateLoadChart();
 
                 // 更新进程列表
                 this.processes = await this.request('/process/list');
@@ -243,6 +285,235 @@ new Vue({
             } catch (error) {
                 console.error('获取系统信息失败:', error);
             }
+        },
+
+        // 初始化负载图表
+        initLoadChart() {
+            if (!document.getElementById('loadChart')) return;
+            
+            this.loadChart = echarts.init(document.getElementById('loadChart'));
+            const option = {
+                title: {
+                    textStyle: {
+                        fontSize: 14,
+                        fontWeight: 'normal'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        let result = params[0].axisValue + '<br/>';
+                        params.forEach(param => {
+                            let value = param.value;
+                            if (param.seriesName === '网络使用率') {
+                                value = value + ' MB/s';
+                            } else {
+                                value = value + '%';
+                            }
+                            result += param.seriesName + ': ' + value + '<br/>';
+                        });
+                        return result;
+                    }
+                },
+                legend: {
+                    data: ['CPU使用率', '内存使用率', '磁盘使用率', '网络使用率'],
+                    bottom: 0
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '80px',
+                    top: '30px',
+                    containLabel: true
+                },
+                dataZoom: [
+                    {
+                        type: 'slider',
+                        show: true,
+                        bottom: 30,
+                        height: 20,
+                        start: 75,
+                        end: 100,
+                        handleSize: 20,
+                        showDetail: true,
+                        borderColor: '#ddd',
+                        handleStyle: {
+                            color: '#fff',
+                            borderColor: '#ACB8D1'
+                        },
+                        textStyle: {
+                            color: '#666'
+                        },
+                        backgroundColor: '#fff',
+                        fillerColor: 'rgba(167,183,204,0.4)',
+                        moveHandleSize: 5
+                    },
+                    {
+                        type: 'inside',
+                        start: 75,
+                        end: 100,
+                        zoomOnMouseWheel: true,
+                        moveOnMouseMove: true
+                    }
+                ],
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: this.loadHistory.timestamps,
+                    axisLabel: {
+                        fontSize: 10,
+                        formatter: function(value) {
+                            return value;
+                        },
+                        rotate: 45
+                    }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '使用率',
+                        min: 0,
+                        max: 100,
+                        splitLine: {
+                            lineStyle: {
+                                type: 'dashed'
+                            }
+                        },
+                        axisLabel: {
+                            formatter: '{value}%'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '网络',
+                        splitLine: {
+                            show: false
+                        },
+                        axisLabel: {
+                            formatter: '{value}MB/s'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'CPU使用率',
+                        type: 'line',
+                        smooth: true,
+                        data: this.loadHistory.cpu,
+                        itemStyle: {
+                            color: '#409EFF'
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(64,158,255,0.3)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(64,158,255,0.1)'
+                            }])
+                        }
+                    },
+                    {
+                        name: '内存使用率',
+                        type: 'line',
+                        smooth: true,
+                        data: this.loadHistory.memory,
+                        itemStyle: {
+                            color: '#67C23A'
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(103,194,58,0.3)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(103,194,58,0.1)'
+                            }])
+                        }
+                    },
+                    {
+                        name: '磁盘使用率',
+                        type: 'line',
+                        smooth: true,
+                        data: this.loadHistory.disk,
+                        itemStyle: {
+                            color: '#E6A23C'
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(230,162,60,0.3)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(230,162,60,0.1)'
+                            }])
+                        }
+                    },
+                    {
+                        name: '网络使用率',
+                        type: 'line',
+                        smooth: true,
+                        yAxisIndex: 1,
+                        data: this.loadHistory.network,
+                        itemStyle: {
+                            color: '#F56C6C'
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(245,108,108,0.3)'
+                            }, {
+                                offset: 1,
+                                color: 'rgba(245,108,108,0.1)'
+                            }])
+                        }
+                    }
+                ]
+            };
+            this.loadChart.setOption(option);
+
+            // 监听窗口大小变化
+            window.addEventListener('resize', () => {
+                if (this.loadChart) {
+                    this.loadChart.resize();
+                }
+            });
+        },
+
+        // 更新负载图表
+        updateLoadChart() {
+            if (!this.loadChart) {
+                this.initLoadChart();
+                return;
+            }
+
+            this.loadChart.setOption({
+                xAxis: {
+                    data: this.loadHistory.timestamps
+                },
+                series: [
+                    {
+                        name: 'CPU使用率',
+                        data: this.loadHistory.cpu
+                    },
+                    {
+                        name: '内存使用率',
+                        data: this.loadHistory.memory
+                    },
+                    {
+                        name: '磁盘使用率',
+                        data: this.loadHistory.disk
+                    },
+                    {
+                        name: '网络使用率',
+                        data: this.loadHistory.network
+                    }
+                ]
+            });
         },
 
         // 文件管理
@@ -444,6 +715,14 @@ new Vue({
 
         formatDate(date) {
             return new Date(date).toLocaleString();
+        },
+
+        formatSpeed(bytesPerSecond) {
+            if (!bytesPerSecond && bytesPerSecond !== 0) return '0 B/s';
+            const k = 1024;
+            const sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
+            const i = Math.floor(Math.log(Math.abs(bytesPerSecond)) / Math.log(k));
+            return parseFloat((bytesPerSecond / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         },
 
         getFileLanguage(filename) {
@@ -1060,7 +1339,18 @@ new Vue({
     },
     watch: {
         currentView(newView) {
-            if (newView === 'system') this.getSystemInfo();
+            if (newView === 'system') {
+                this.getSystemInfo();
+                this.$nextTick(() => {
+                    this.initLoadChart();
+                    // 监听窗口大小变化
+                    window.addEventListener('resize', () => {
+                        if (this.loadChart) {
+                            this.loadChart.resize();
+                        }
+                    });
+                });
+            }
             if (newView === 'files') this.listFiles();
             if (newView === 'process') this.listProcesses();
             if (newView === 'terminal') {
