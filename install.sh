@@ -119,8 +119,45 @@ if ! command -v go &> /dev/null; then
         GO_VERSION="1.19.13"
     fi
     
-    # 下载最新的 Go
-    wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
+    # 定义下载镜像源
+    MIRRORS=(
+        "https://golang.google.cn/dl"
+        "https://gomirrors.org/dl"
+        "https://mirrors.aliyun.com/golang"
+        "https://mirrors.ustc.edu.cn/golang"
+    )
+    
+    # 下载函数，带有超时处理
+    download_with_timeout() {
+        local url=$1
+        local output=$2
+        local timeout=30  # 设置超时时间为30秒
+        
+        if wget --timeout=$timeout --tries=3 "$url" -O "$output" 2>/dev/null; then
+            return 0
+        else
+            return 1
+        fi
+    }
+    
+    # 尝试从不同镜像源下载
+    GO_DOWNLOADED=false
+    for mirror in "${MIRRORS[@]}"; do
+        echo "尝试从 $mirror 下载 Go..."
+        if download_with_timeout "$mirror/go${GO_VERSION}.linux-amd64.tar.gz" "go${GO_VERSION}.linux-amd64.tar.gz"; then
+            GO_DOWNLOADED=true
+            echo "从 $mirror 下载成功"
+            break
+        else
+            echo "从 $mirror 下载失败，尝试下一个镜像"
+        fi
+    done
+    
+    # 检查是否成功下载
+    if [ "$GO_DOWNLOADED" = false ]; then
+        echo -e "${RED}所有镜像源下载失败，请检查网络连接或手动安装 Go${NC}"
+        exit 1
+    fi
     
     # 删除可能存在的旧版本
     rm -rf /usr/local/go
@@ -131,6 +168,8 @@ if ! command -v go &> /dev/null; then
     # 设置环境变量
     if ! grep -q "/usr/local/go/bin" /etc/profile; then
         echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+        # 设置 GOPROXY 使用中国代理
+        echo 'export GOPROXY=https://goproxy.cn,direct' >> /etc/profile
     fi
     source /etc/profile
     
