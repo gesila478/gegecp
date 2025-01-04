@@ -215,10 +215,16 @@ MIRRORS=(
 clone_repo() {
     local url=$1
     local dir=$2
+    local timeout=30  # 设置超时时间为120秒
+    
     echo "尝试从 $url 克隆..."
-    if git clone --depth=1 --branch main "$url" "$dir" 2>/dev/null; then
+    echo "超时时间: ${timeout}秒"
+    
+    # 使用 timeout 命令限制克隆时间
+    if timeout $timeout git clone --depth=1 --branch main --progress "$url" "$dir" 2>&1 | grep -E 'Receiving|Resolving|Checking'; then
         return 0
     else
+        echo "克隆超时或失败"
         return 1
     fi
 }
@@ -226,14 +232,16 @@ clone_repo() {
 # 尝试从不同镜像源克隆
 CLONE_SUCCESS=false
 for mirror in "${MIRRORS[@]}"; do
+    echo -e "\n${GREEN}正在尝试镜像: $mirror${NC}"
     if clone_repo "$mirror" "$TMP_DIR"; then
         CLONE_SUCCESS=true
-        echo "从 $mirror 克隆成功"
+        echo -e "${GREEN}从 $mirror 克隆成功${NC}"
         break
     else
-        echo "从 $mirror 克隆失败，尝试下一个镜像"
+        echo -e "${RED}从 $mirror 克隆失败，等待 5 秒后尝试下一个镜像${NC}"
         rm -rf "$TMP_DIR"
         mkdir -p "$TMP_DIR"
+        sleep 5
     fi
 done
 
