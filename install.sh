@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# 错误处理
-set -e
-
 # 设置颜色
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -30,8 +27,17 @@ handle_error() {
 
 # 设置错误处理
 trap 'handle_error' ERR
+set -e
 
 echo -e "${GREEN}开始安装 Linux 管理面板......${NC}"
+
+# 清理旧的安装
+echo "清理旧的安装..."
+systemctl stop gegecp 2>/dev/null || true
+systemctl disable gegecp 2>/dev/null || true
+rm -f /etc/systemd/system/gegecp.service
+rm -rf /opt/gegecp
+systemctl daemon-reload
 
 # 检查是否为 root 用户
 if [ "$EUID" -ne 0 ]; then 
