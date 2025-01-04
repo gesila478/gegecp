@@ -47,10 +47,9 @@ fi
 
 # 安装 curl
 echo "正在安装 curl,wget..."
-apt-get update
-apt-get upgrade
-apt-get install -y curl
-apt-get install -y wget
+DEBIAN_FRONTEND=noninteractive apt-get update -y
+DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget
 
 # 检查系统
 if [ -f /etc/os-release ]; then
